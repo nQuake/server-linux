@@ -1,23 +1,27 @@
-#!/bin/bash
+#!/bin/sh
 
-# nQuakesv Bash Installer Script v1.1 (for Linux)
-# by Empezar
+# nQuakesv Installer Script v1.2 (for Linux)
+# by Empezar & dimman
+
+defaultdir="~/nquakesv"
+eval defaultdir=$defaultdir
+
+error() {
+	printf "ERROR: %s\n" "$*"
+        [ "$created" -ne 1 ] || {
+                cd
+		echo "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." 
+		read dummy
+                rm -rf $directory
+        }
+	exit 1
+}
 
 # Check if unzip is installed
-unzip=`which unzip`
-if [ "$unzip"  = "" ]
-then
-	echo "The package 'unzip' is not installed. Please install it and run the nQuakesv installation again."
-	exit
-fi
+which unzip >/dev/null || error "The package 'unzip' is not installed. Please install it and run the nQuakesv installation again."
 
 # Check if curl is installed
-curl=`which curl`
-if [ "$curl"  = "" ]
-then
-        echo "The package 'curl' is not installed. Please install it and run the nQuakesv installation again."
-        exit
-fi
+which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the nQuakesv installation again."
 
 echo
 echo "Welcome to the nQuakesv v1.1 installation"
@@ -27,133 +31,113 @@ echo "Press ENTER to use [default] option."
 echo
 
 # Create the nQuake folder
-defaultdir="~/nquakesv"
-read -p "Where do you want to install nQuakesv? [$defaultdir]: " directory
-if [ "$directory" = "" ]
-then
-        directory=$defaultdir
-fi
+printf "Where do you want to install nQuakesv? [$defaultdir]: " 
+read directory
+
 eval directory=$directory
-if [ -d "$directory" ]
-then
-	if [ -w "$directory" ]
-	then
+
+[ ! -z "$directory" ] || eval directory=$defaultdir
+
+if [ -d "$directory" ]; then
+	if [ -w "$directory" ]; then
 		created=0
 	else
-		echo;echo "Error: You do not have write access to $directory. Exiting."
-		exit
+		error "You do not have write access to '$directory'. Exiting."
 	fi
 else
-	if [ -e "$directory" ]
-	then
-		echo;echo "Error: $directory already exists and is a file, not a directory. Exiting."
+	if [ -e "$directory" ]; then
+		error "'$directory' already exists but is a file, not a directory. Exiting."
 		exit
 	else
-		mkdir -p $directory 2> /dev/null
+		mkdir -p $directory 2>/dev/null || error "Failed to create install dir: '$directory'"
 		created=1
 	fi
 fi
-if [ -d "$directory" ] && [ -w "$directory" ]
+if [ -w "$directory" ]
 then
 	cd $directory
 	directory=$(pwd)
 else
-	echo;echo "Error: You do not have write access to $directory. Exiting."
-	exit
+	error "You do not have write access to $directory. Exiting."
 fi
 
 # Hostname
 defaulthostname="KTX Allround"
-read -p "Enter a descriptive hostname [$defaulthostname]: " hostname
-if [ "$hostname" = "" ]
-then
-        hostname=$defaulthostname
-fi
+printf "Enter a descriptive hostname [$defaulthostname]: " 
+read hostname
+[ ! -z "$hostname" ] || hostname=$defaulthostname
 
 # IP/dns
-read -p "Enter your server's DNS. [use external IP]: " hostdns
+printf "Enter your servers DNS. [use external IP]: " 
+read hostdns
 
 # How many ports to run
 defaultports=4
-read -p "How many ports of KTX do you wish to run (max 10)? [$defaultports]: " ports
-if [ "$ports" = "" ]
-then
-        ports=$defaultports
-else
-		if [ "$ports" -gt 10 ]
-		then
-			ports=10
-		fi
-fi
+printf "How many ports of KTX do you wish to run (max 10)? [$defaultports]: " 
+read ports
+[ ! -z "$ports" ] || ports=$defaultports
+[ "$ports" -le 10 ] || ports=10
 
 # Run qtv?
-read -p "Do you wish to run a qtv proxy? (y/n) [y]: " qtv
-if [ "$qtv" = "" ]
-then
-        qtv="y"
-fi
+printf "Do you wish to run a qtv proxy? (y/n) [y]: " 
+read qtv
+[ ! -z "$qtv" ] || qtv=y
 
 # Run qwfwd?
-read -p "Do you wish to run a qwfwd proxy? (y/n) [y]: " qwfwd
-if [ "$qwfwd" = "" ]
-then
-        qwfwd="y"
-fi
+printf "Do you wish to run a qwfwd proxy? (y/n) [y]: " 
+read qwfwd
+[ ! -z "$qwfwd" ] || qwfwd="y"
 
 # Admin name
 defaultadmin=$USER
-read -p "Who is the admin of this server? [$defaultadmin]: " admin
-if [ "$admin" = "" ]
-then
-        admin=$defaultadmin
-fi
+
+printf "Who is the admin of this server? [$defaultadmin]: " 
+read admin
+[ ! -z "$admin" ] || admin=$defaultadmin
 
 # Admin email
 defaultemail="$admin@example.com"
-read -p "What is the admin's e-mail? [$defaultemail]: " email
-if [ "$email" = "" ]
-then
-        email=$defaultemail
-fi
+printf "What is the admin's e-mail? [$defaultemail]: " 
+read email
+[ ! -z "$email" ] || email=$defaultemail
 
 # Rcon
 defaultrcon="changeme"
-read -p "What should the rcon password be? [$defaultrcon]: " rcon
-if [ "$rcon" = "" ]
-then
+printf "What should the rcon password be? [$defaultrcon]: " 
+read rcon
+[ ! -z "$rcon" ] || {
 	echo
 	echo "Your rcon has been set to $defaultrcon. This is an enormous security risk."
 	echo "To change this, edit $directory/ktx/pwd.cfg"
 	echo
         rcon=$defaultrcon
-fi
+}
 
 if [ "$qtv" == "y" ]
 then
 	# Qtv password
 	defaultqtvpass="changeme"
-	read -p "What should the qtv admin password be? [$defaultqtvpass]: " qtvpass
-	if [ "$qtvpass" = "" ]
-	then
+	printf "What should the qtv admin password be? [$defaultqtvpass]: " 
+	read qtvpass
+	[ ! -z "$qtvpass" ] || {
 	        echo
 	        echo "Your qtv password has been set to $defaultqtvpass. This is not recommended."
 	        echo "To change this, edit $directory/qtv/qtv.cfg"
 	        echo
 	        qtvpass=$defaultqtvpass
-	fi
+	}
 fi
 
 # Search for pak1.pak
 defaultsearchdir="~/"
-pak=""
-read -p "Do you want setup to search for pak1.pak? (y/n) [y]: " search
-if [ "$search" = "" ] || [ "$search" == "y" ]
+pak=
+printf "Do you want setup to search for pak1.pak? (y/n) [y]: " 
+read search
+if [ -z "$search" ] || [ "$search" = "y" ]
 then
-	read -p "Enter path to search for pak1.pak (subdirs are also searched) [$defaultsearchdir]: " path
-	if [ "$path" = "" ]
-	then
-		path=$defaultsearchdir
-	fi
+	printf "Enter path to search for pak1.pak (subdirs are also searched) [$defaultsearchdir]: " 
+	read path
+	[ ! -z "$path" ] || path=$defaultsearchdir
 	eval path=$path
 	pak=$(echo $(find $path -type f -iname "pak1.pak" -size 33M -exec echo {} \; 2> /dev/null) | cut -d " " -f1)
 	if [ "$pak" != "" ]
@@ -166,208 +150,125 @@ fi
 echo
 
 # Download nquake.ini
-wget --inet4-only -q -O nquake.ini http://nquake.sourceforge.net/nquake.ini
-if [ -s "nquake.ini" ]
-then
-	echo foo >> /dev/null
-else
-	echo "Error: Could not download nquake.ini. Better luck next time. Exiting."
-        if [ "$created" = "1" ]
-        then
-                cd
-		read -p "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." remove
-                rm -rf $directory
-        fi
-	exit
-fi
+wget --inet4-only -q -O nquake.ini http://nquake.sourceforge.net/nquake.ini || error "Failed to download nquake.ini"
+[ -s "nquake.ini" ] || error "Downloaded nquake.ini but file is empty?! Exiting."
 
 # List all the available mirrors
 echo "From what mirror would you like to download nQuakesv?"
 grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl
-read -p "Enter mirror number [random]: " mirror
+printf "Enter mirror number [random]: " 
+read mirror
 mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
-if [ "$mirror" = "" ]
-then
+[ -n "$mirror" ] || {
         echo;echo -n "* Using mirror: "
-        RANGE=$(expr$(grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
-        while [ "$mirror" = "" ]
+        range=$(expr$(grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
+        while [ -z "$mirror" ]
         do
                 number=$RANDOM
-                let "number %= $RANGE"
+                let "number %= $range"
                 mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
 		mirrorname=$(grep "^$number=\".*" nquake.ini | cut -d "\"" -f2)
         done
         echo "$mirrorname"
-fi
+}
 mkdir -p id1
 echo;echo
 
 # Find out what architecture to use
-binary=`uname -i`
+binary=$(uname -i)
 
 # Download all the packages
 echo "=== Downloading ==="
-wget --inet4-only -O qsw106.zip $mirror/qsw106.zip
-if [ -s "qsw106.zip" ]
+wget --inet4-only -O qsw106.zip $mirror/qsw106.zip || error "Failed to download $mirror/qsw106.zip"
+wget --inet4-only -O sv-gpl.zip $mirror/sv-gpl.zip || error "Failed to download $mirror/sv-gpl.zip"
+wget --inet4-only -O sv-non-gpl.zip $mirror/sv-non-gpl.zip || error "Failed to download $mirror/sv-non-gpl.zip"
+wget --inet4-only -O sv-configs.zip $mirror/sv-configs.zip || error "Failed to download $mirror/sv-configs.zip"
+if [ "$binary" == "x86_64" ]
 then
-	if [ "$(du qsw106.zip | cut -f1)" \> "0" ]
-	then
-	        wget --inet4-only -O sv-gpl.zip $mirror/sv-gpl.zip
-	fi
+	wget --inet4-only -O sv-bin-x64.zip $mirror/sv-bin-x64.zip || error "Failed to download $mirror/sv-bin-x64.zip"
+	[ -s "sv-bin-x64.zip" ] || error "Downloaded sv-bin-x64.zip but file is empty?!"
+else
+	wget --inet4-only -O sv-bin-x86.zip $mirror/sv-bin-x86.zip || error "Failed to download $mirror/sv-bin-x86.zip"
+	[ -s "sv-bin-x86.zip" ] || error "Downloaded sv-bin-x86.zip but file is empty?!"
 fi
-if [ -s "sv-gpl.zip" ]
-then
-	if [ "$(du sv-gpl.zip | cut -f1)" \> "0" ]
-	then
-		wget --inet4-only -O sv-non-gpl.zip $mirror/sv-non-gpl.zip
-	fi
-fi
-if [ -s "sv-non-gpl.zip" ]
-then
-	if [ "$(du sv-non-gpl.zip | cut -f1)" \> "0" ]
-	then
-		wget --inet4-only -O sv-configs.zip $mirror/sv-configs.zip
-	fi
-fi
-if [ -s "sv-configs.zip" ]
-then
-        if [ "$(du sv-configs.zip | cut -f1)" \> "0" ]
-        then
-                if [ "$binary" == "x86_64" ]
-                then
-                        wget --inet4-only -O sv-bin-x64.zip $mirror/sv-bin-x64.zip
-                else
-                        wget --inet4-only -O sv-bin-x86.zip $mirror/sv-bin-x86.zip
-                fi
-        fi
-fi
+
+[ -s "qsw106.zip" ] || error "Downloaded qwsv106.zip but file is empty?!"
+[ -s "sv-gpl.zip" ] || error "Downloaded sv-gpl.zip but file is empty?!"
+[ -s "sv-non-gpl.zip" ] || error "Downloaded sv-non-gpl.zip but file is empty?!"
+[ -s "sv-configs.zip" ] || error "Downloaded sv-configs.zip but file is empty?!"
+
 
 # Get remote IP address
 echo "Resolving external IP address..."
 echo
-remote_ip=`curl http://myip.dnsomatic.com`
-if [ "$hostdns" = "" ]; then
-	hostdns=$remote_ip
-fi
-echo
+remote_ip=$(curl http://myip.dnsomatic.com)
+[ -n "$hostdns" ] || hostdns=$remote_ip
 
-# Terminate installation if not all packages were downloaded
-if [ -s "sv-bin-x86.zip" -o -s "sv-bin-x64.zip" ]
-then
-	if [ -s "sv-bin-x86.zip" ]
-	then
-		if [ "$(du sv-bin-x86.zip | cut -f1)" \> "0" ]
-		then
-			echo foo >> /dev/null
-		else
-			echo "Error: Some distribution files failed to download. Better luck next time. Exiting."
-			rm -rf $directory/qsw106.zip $directory/sv-gpl.zip $directory/sv-non-gpl.zip $directory/sv-configs.zip $directory/sv-bin-x86.zip $directory/nquake.ini
-			if [ "$created" = "1" ]
-			then
-				cd
-				read -p "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." remove
-				rm -rf $directory
-			fi
-			exit
-		fi
-	else
-		if [ "$(du sv-bin-x64.zip | cut -f1)" \> "0" ]
-		then
-			echo foo >> /dev/null
-		else
-			echo "Error: Some distribution files failed to download. Better luck next time. Exiting."
-			rm -rf $directory/qsw106.zip $directory/sv-gpl.zip $directory/sv-non-gpl.zip $directory/sv-configs.zip $directory/sv-bin-x64.zip $directory/nquake.ini
-			if [ "$created" = "1" ]
-			then
-				cd
-				read -p "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." remove
-				rm -rf $directory
-			fi
-			exit
-		fi
-	fi
-else
-	echo "Error: Some distribution files failed to download. Better luck next time. Exiting."
-	rm -rf $directory/qsw106.zip $directory/sv-gpl.zip $directory/sv-non-gpl.zip $directory/sv-configs.zip $directory/sv-bin-x86.zip $directory/sv-bin-x64.zip $directory/nquake.ini
-	if [ "$created" = "1" ]
-	then
-		cd
-		read -p "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." remove
-		rm -rf $directory
-	fi
-	exit
-fi
+echo
 
 # Extract all the packages
 echo "=== Installing ==="
-echo -n "* Extracting Quake Shareware..."
-unzip -qqo qsw106.zip ID1/PAK0.PAK 2> /dev/null;echo "done"
-echo -n "* Extracting nQuakesv setup files (1 of 2)..."
-unzip -qqo sv-gpl.zip 2> /dev/null;echo "done"
-echo -n "* Extracting nQuakesv setup files (2 of 2)..."
-unzip -qqo sv-non-gpl.zip 2> /dev/null;echo "done"
-echo -n "* Extracting nQuakesv binaries..."
+printf "* Extracting Quake Shareware..."
+(unzip -qqo qsw106.zip ID1/PAK0.PAK 2>/dev/null && echo done) || echo fail
+printf "* Extracting nQuakesv setup files (1 of 2)..."
+(unzip -qqo sv-gpl.zip 2>/dev/null && echo done) || echo fail
+printf "* Extracting nQuakesv setup files (2 of 2)..."
+(unzip -qqo sv-non-gpl.zip 2>/dev/null && echo done) || echo fail
+printf "* Extracting nQuakesv binaries..."
 if [ "$binary" == "x86_64" ]
 then
-        unzip -qqo sv-bin-x64.zip 2> /dev/null;echo "done"
+        (unzip -qqo sv-bin-x64.zip 2>/dev/null && echo done) || echo fail
 else
-        unzip -qqo sv-bin-x86.zip 2> /dev/null;echo "done"
+        (unzip -qqo sv-bin-x86.zip 2>/dev/null && echo done) || echo fail
 fi
-echo -n "* Extracting nQuakesv configuration files..."
-unzip -qqo sv-configs.zip 2> /dev/null;echo "done"
-if [ "$pak" != "" ]
-then
-	echo -n "* Copying pak1.pak..."
-	cp $pak $directory/id1/pak1.pak 2> /dev/null;echo "done"
-	rm -rf $directory/id1/maps $directory/id1/sound $directory/id1/progs $directory/id1/README
-fi
+printf "* Extracting nQuakesv configuration files..."
+(unzip -qqo sv-configs.zip 2>/dev/null && echo done) || echo fail
+[ -z "$pak" ] || {
+	printf "* Copying pak1.pak..."
+	(cp $pak $directory/id1/pak1.pak 2>/dev/null && echo done) || echo fail
+# IS THIS REALLY NECESSARY???
+	rm -rf $directory/id1/maps $directory/id1/sound $directory/id1/progs $directory/id1/README || :
+}
 echo
 
 # Rename files
 echo "=== Cleaning up ==="
-echo -n "* Renaming files..."
-mv $directory/ID1/PAK0.PAK $directory/id1/pak0.pak 2> /dev/null
-rm -rf $directory/ID1
-echo "done"
+printf "* Renaming files..."
+(mv $directory/ID1/PAK0.PAK $directory/id1/pak0.pak 2>/dev/null && rm -rf $directory/ID1 && echo done) || echo fail
 
 # Remove distribution files
-echo -n "* Removing distribution files..."
-rm -rf $directory/qsw106.zip $directory/sv-gpl.zip $directory/sv-non-gpl.zip $directory/sv-configs.zip $directory/sv-bin-x86.zip $directory/sv-bin-x64.zip $directory/nquake.ini
-echo "done"
+printf "* Removing distribution files..."
+(rm -rf $directory/qsw106.zip $directory/sv-gpl.zip $directory/sv-non-gpl.zip $directory/sv-configs.zip $directory/sv-bin-x86.zip $directory/sv-bin-x64.zip $directory/nquake.ini && echo done) || echo fail
 
 # Convert DOS files to UNIX
-echo -n "* Converting DOS files to UNIX..."
+printf "* Converting DOS files to UNIX..."
 for file in $(find $directory -iname "*.cfg" -or -iname "*.txt" -or -iname "*.sh" -or -iname "README")
 do
-	if [ -f "$file" ]
-	then
-	        awk '{ sub("\r$", ""); print }' $file > /tmp/.nquakesv.tmp
-        	mv /tmp/.nquakesv.tmp $file
-	fi
+	[ ! -f "$file" ] || sed -ie 's/\r\n/\n/' $file
 done
 echo "done"
 
 # Set the correct permissions
-echo -n "* Setting permissions..."
+printf "* Setting permissions..."
 find $directory -type f -exec chmod -f 644 {} \;
 find $directory -type d -exec chmod -f 755 {} \;
-chmod -f +x $directory/mvdsv 2> /dev/null
-chmod -f +x $directory/ktx/mvdfinish.qws 2> /dev/null
-chmod -f +x $directory/qtv/qtv.bin 2> /dev/null
-chmod -f +x $directory/qwfwd/qwfwd.bin 2> /dev/null
-chmod -f +x $directory/*.sh 2> /dev/null
-chmod -f +x $directory/run/*.sh 2> /dev/null
-chmod -f +x $directory/addons/*.sh 2> /dev/null
+chmod -f +x $directory/mvdsv 2>/dev/null
+chmod -f +x $directory/ktx/mvdfinish.qws 2>/dev/null
+chmod -f +x $directory/qtv/qtv.bin 2>/dev/null
+chmod -f +x $directory/qwfwd/qwfwd.bin 2>/dev/null
+chmod -f +x $directory/*.sh 2>/dev/null
+chmod -f +x $directory/run/*.sh 2>/dev/null
+chmod -f +x $directory/addons/*.sh 2>/dev/null
 echo "done"
 
 # Update configuration files
-echo -n "* Updating configuration files..."
+printf "* Updating configuration files..."
 mkdir -p ~/.nquakesv
-rm -rf ~/.nquakesv/install_dir;echo $directory >> ~/.nquakesv/install_dir
-rm -rf ~/.nquakesv/hostname;echo $hostname >> ~/.nquakesv/hostname
-rm -rf ~/.nquakesv/hostdns;echo $hostdns >> ~/.nquakesv/hostdns
-rm -rf ~/.nquakesv/ip;echo $remote_ip >> ~/.nquakesv/ip
-rm -rf ~/.nquakesv/admin;echo "$admin <$email>" >> ~/.nquakesv/admin
+echo $directory > ~/.nquakesv/install_dir
+echo $hostname > ~/.nquakesv/hostname
+echo $hostdns > ~/.nquakesv/hostdns
+echo $remote_ip > ~/.nquakesv/ip
+echo "$admin <$email>" > ~/.nquakesv/admin
 #/start_servers.sh
 safe_pattern=$(printf "%s\n" "$directory" | sed 's/[][\.*^$/]/\\&/g')
 sed -i "s/NQUAKESV_PATH/${safe_pattern}/g" $directory/start_servers.sh
@@ -393,7 +294,7 @@ fi
 echo "done"
 
 # Fix port files etc
-echo -n "* Adjusting amount of ports..."
+printf "* Adjusting amount of ports..."
 i=1
 while [ $i -le $ports ]; do
 	# Fix port number
@@ -421,7 +322,7 @@ while [ $i -le $ports ]; do
 	echo "qtv $hostdns:$port" >> $directory/qtv/qtv.cfg
 	# Fix start_servers.sh script
         echo >> $directory/start_servers.sh
-        echo "echo -n \"* Starting mvdsv (port $port)...\"" >> $directory/start_servers.sh
+        echo "printf \"* Starting mvdsv (port $port)...\"" >> $directory/start_servers.sh
         echo "if ps ax | grep -v grep | grep \"mvdsv -port $port\" > /dev/null" >> $directory/start_servers.sh
         echo "then" >> $directory/start_servers.sh
         echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
@@ -436,7 +337,7 @@ while [ $i -le $ports ]; do
 	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
 	echo "pid=\`ps ax | grep -v grep | grep \"mvdsv -port $port\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
 	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-	let i=i+1
+	i=$((i+1))
 done
 rm -rf $directory/ktx/portx.cfg
 rm -rf $directory/run/portx.sh
@@ -445,10 +346,10 @@ echo "done"
 # Add QTV
 if [ "$qtv" = "y" ]
 then
-	echo -n "* Adding qtv to start/stop scripts..."
+	printf "* Adding qtv to start/stop scripts..."
 	# start_servers.sh
 	echo >> $directory/start_servers.sh
-	echo "echo -n \"* Starting qtv (port 28000)...\"" >> $directory/start_servers.sh
+	echo "printf \"* Starting qtv (port 28000)...\"" >> $directory/start_servers.sh
 	echo "if ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" > /dev/null" >> $directory/start_servers.sh
 	echo "then" >> $directory/start_servers.sh
 	echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
@@ -465,9 +366,8 @@ then
 	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
 	echo "done"
 else
-	echo -n "* Removing qtv files..."
-	rm -rf $directory/qtv $directory/run/qtv.sh
-	echo "done"
+	printf "* Removing qtv files..."
+	(rm -rf $directory/qtv $directory/run/qtv.sh && echo done) || echo fail
 fi
 
 # Add/remove qwfwd
@@ -493,9 +393,8 @@ then
 	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
         echo "done"
 else
-	echo -n "* Removing qwfwd files..."
-        rm -rf $directory/qwfwd $directory/run/qwfwd.sh
-	echo "done"
+	printf "* Removing qwfwd files..."
+        (rm -rf $directory/qwfwd $directory/run/qwfwd.sh && echo done) || echo fail
 fi
 
 echo;echo "To make sure your servers are always running, type \"crontab -e\" and add the following:"
