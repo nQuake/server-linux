@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# nQuakesv Installer Script v1.2 (for Linux)
+# nQuakesv Installer Script v1.3 (for Linux)
 # by Empezar & dimman
 
 defaultdir="~/nquakesv"
@@ -24,7 +24,7 @@ which unzip >/dev/null || error "The package 'unzip' is not installed. Please in
 which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the nQuakesv installation again."
 
 echo
-echo "Welcome to the nQuakesv v1.1 installation"
+echo "Welcome to the nQuakesv v1.3 installation"
 echo "========================================="
 echo
 echo "Press ENTER to use [default] option."
@@ -68,7 +68,7 @@ read hostname
 [ ! -z "$hostname" ] || hostname=$defaulthostname
 
 # IP/dns
-printf "Enter your servers DNS. [use external IP]: " 
+printf "Enter your server's DNS. [use external IP]: " 
 read hostdns
 
 # How many ports to run
@@ -81,7 +81,7 @@ read ports
 # Run qtv?
 printf "Do you wish to run a qtv proxy? (y/n) [y]: " 
 read qtv
-[ ! -z "$qtv" ] || qtv=y
+[ ! -z "$qtv" ] || qtv="y"
 
 # Run qwfwd?
 printf "Do you wish to run a qwfwd proxy? (y/n) [y]: " 
@@ -113,7 +113,7 @@ read rcon
         rcon=$defaultrcon
 }
 
-if [ "$qtv" == "y" ]
+if [ "$qtv" = "y" ]
 then
 	# Qtv password
 	defaultqtvpass="changeme"
@@ -183,7 +183,7 @@ wget --inet4-only -O qsw106.zip $mirror/qsw106.zip || error "Failed to download 
 wget --inet4-only -O sv-gpl.zip $mirror/sv-gpl.zip || error "Failed to download $mirror/sv-gpl.zip"
 wget --inet4-only -O sv-non-gpl.zip $mirror/sv-non-gpl.zip || error "Failed to download $mirror/sv-non-gpl.zip"
 wget --inet4-only -O sv-configs.zip $mirror/sv-configs.zip || error "Failed to download $mirror/sv-configs.zip"
-if [ "$binary" == "x86_64" ]
+if [ "$binary" = "x86_64" ]
 then
 	wget --inet4-only -O sv-bin-x64.zip $mirror/sv-bin-x64.zip || error "Failed to download $mirror/sv-bin-x64.zip"
 	[ -s "sv-bin-x64.zip" ] || error "Downloaded sv-bin-x64.zip but file is empty?!"
@@ -215,7 +215,7 @@ printf "* Extracting nQuakesv setup files (1 of 2)..."
 printf "* Extracting nQuakesv setup files (2 of 2)..."
 (unzip -qqo sv-non-gpl.zip 2>/dev/null && echo done) || echo fail
 printf "* Extracting nQuakesv binaries..."
-if [ "$binary" == "x86_64" ]
+if [ "$binary" = "x86_64" ]
 then
         (unzip -qqo sv-bin-x64.zip 2>/dev/null && echo done) || echo fail
 else
@@ -244,7 +244,7 @@ printf "* Removing distribution files..."
 printf "* Converting DOS files to UNIX..."
 for file in $(find $directory -iname "*.cfg" -or -iname "*.txt" -or -iname "*.sh" -or -iname "README")
 do
-	[ ! -f "$file" ] || sed -ie 's/\r\n/\n/' $file
+	[ ! -f "$file" ] || sed -i 's///g' $file
 done
 echo "done"
 
@@ -276,7 +276,7 @@ sed -i "s/NQUAKESV_PATH/${safe_pattern}/g" $directory/start_servers.sh
 safe_pattern=$(printf "%s\n" "$rcon" | sed 's/[][\.*^$/]/\\&/g')
 sed -i "s/NQUAKESV_RCON/${safe_pattern}/g" $directory/ktx/pwd.cfg
 #/qtv/qtv.cfg
-if [ "$qtv" == "y" ]
+if [ "$qtv" = "y" ]
 then
 	safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
 	sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" $directory/qtv/qtv.cfg
@@ -286,7 +286,7 @@ then
 	ln -s ../ktx/demos demos
 fi
 #/qwfwd/qwfwd.cfg
-if [ "$qwfwd" == "y" ]
+if [ "$qwfwd" = "y" ]
 then
         safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
         sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" $directory/qwfwd/qwfwd.cfg
