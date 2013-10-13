@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# nQuakesv Bash Installer Script v1.0 (for Linux)
+# nQuakesv Bash Installer Script v1.1 (for Linux)
 # by Empezar
 
 # Check if unzip is installed
@@ -20,7 +20,7 @@ then
 fi
 
 echo
-echo "Welcome to the nQuakesv v1.0 installation"
+echo "Welcome to the nQuakesv v1.1 installation"
 echo "========================================="
 echo
 echo "Press ENTER to use [default] option."
@@ -62,20 +62,28 @@ else
 	exit
 fi
 
-# How many ports to run
-defaultports=4
-read -p "How many ports do you wish to run (max 4)? [$defaultports]: " ports
-if [ "$ports" = "" ]
-then
-        ports=$defaultports
-fi
-
 # Hostname
 defaulthostname="KTX Allround"
 read -p "Enter a descriptive hostname [$defaulthostname]: " hostname
 if [ "$hostname" = "" ]
 then
         hostname=$defaulthostname
+fi
+
+# IP/dns
+read -p "Enter your server's DNS. [use external IP]: " hostdns
+
+# How many ports to run
+defaultports=4
+read -p "How many ports of KTX do you wish to run (max 10)? [$defaultports]: " ports
+if [ "$ports" = "" ]
+then
+        ports=$defaultports
+else
+		if [ "$ports" -gt 10 ]
+		then
+			ports=10
+		fi
 fi
 
 # Run qtv?
@@ -105,7 +113,7 @@ defaultemail="$admin@example.com"
 read -p "What is the admin's e-mail? [$defaultemail]: " email
 if [ "$email" = "" ]
 then
-        admin=$defaultemail
+        email=$defaultemail
 fi
 
 # Rcon
@@ -123,8 +131,8 @@ fi
 if [ "$qtv" == "y" ]
 then
 	# Qtv password
-	defaultqtvpass="123456"
-	read -p "What should the qtv password be? [$defaultqtvpass]: " qtvpass
+	defaultqtvpass="changeme"
+	read -p "What should the qtv admin password be? [$defaultqtvpass]: " qtvpass
 	if [ "$qtvpass" = "" ]
 	then
 	        echo
@@ -138,8 +146,8 @@ fi
 # Search for pak1.pak
 defaultsearchdir="~/"
 pak=""
-read -p "Do you want setup to search for pak1.pak? (y/n) [n]: " search
-if [ "$search" = "y" ]
+read -p "Do you want setup to search for pak1.pak? (y/n) [y]: " search
+if [ "$search" = "" ] || [ "$search" == "y" ]
 then
 	read -p "Enter path to search for pak1.pak (subdirs are also searched) [$defaultsearchdir]: " path
 	if [ "$path" = "" ]
@@ -167,7 +175,7 @@ else
         if [ "$created" = "1" ]
         then
                 cd
-		read -p "The directory $directory is about to be removed, press Enter to confirm or CTRL+C to exit." remove
+		read -p "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." remove
                 rm -rf $directory
         fi
 	exit
@@ -235,9 +243,12 @@ then
 fi
 
 # Get remote IP address
-echo "Fetching remote IP address..."
+echo "Resolving external IP address..."
 echo
 remote_ip=`curl http://myip.dnsomatic.com`
+if [ "$hostdns" = "" ]; then
+	hostdns=$remote_ip
+fi
 echo
 
 # Terminate installation if not all packages were downloaded
@@ -254,7 +265,7 @@ then
 			if [ "$created" = "1" ]
 			then
 				cd
-				read -p "The directory $directory is about to be removed, press Enter to confirm or CTRL+C to exit." remove
+				read -p "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." remove
 				rm -rf $directory
 			fi
 			exit
@@ -269,7 +280,7 @@ then
 			if [ "$created" = "1" ]
 			then
 				cd
-				read -p "The directory $directory is about to be removed, press Enter to confirm or CTRL+C to exit." remove
+				read -p "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." remove
 				rm -rf $directory
 			fi
 			exit
@@ -281,7 +292,7 @@ else
 	if [ "$created" = "1" ]
 	then
 		cd
-		read -p "The directory $directory is about to be removed, press Enter to confirm or CTRL+C to exit." remove
+		read -p "The directory $directory is about to be removed, press ENTER to confirm or CTRL+C to exit." remove
 		rm -rf $directory
 	fi
 	exit
@@ -346,42 +357,28 @@ chmod -f +x $directory/qtv/qtv.bin 2> /dev/null
 chmod -f +x $directory/qwfwd/qwfwd.bin 2> /dev/null
 chmod -f +x $directory/*.sh 2> /dev/null
 chmod -f +x $directory/run/*.sh 2> /dev/null
+chmod -f +x $directory/addons/*.sh 2> /dev/null
 echo "done"
 
 # Update configuration files
 echo -n "* Updating configuration files..."
 mkdir -p ~/.nquakesv
-rm -rf ~/.nquakesv/install_dir
-echo $directory >> ~/.nquakesv/install_dir
+rm -rf ~/.nquakesv/install_dir;echo $directory >> ~/.nquakesv/install_dir
+rm -rf ~/.nquakesv/hostname;echo $hostname >> ~/.nquakesv/hostname
+rm -rf ~/.nquakesv/hostdns;echo $hostdns >> ~/.nquakesv/hostdns
+rm -rf ~/.nquakesv/ip;echo $remote_ip >> ~/.nquakesv/ip
+rm -rf ~/.nquakesv/admin;echo "$admin <$email>" >> ~/.nquakesv/admin
 #/start_servers.sh
 safe_pattern=$(printf "%s\n" "$directory" | sed 's/[][\.*^$/]/\\&/g')
 sed -i "s/NQUAKESV_PATH/${safe_pattern}/g" $directory/start_servers.sh
 #/ktx/pwd.cfg
 safe_pattern=$(printf "%s\n" "$rcon" | sed 's/[][\.*^$/]/\\&/g')
 sed -i "s/NQUAKESV_RCON/${safe_pattern}/g" $directory/ktx/pwd.cfg
-#/ktx/port1-4.cfg
-safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" $directory/ktx/port1.cfg
-sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" $directory/ktx/port2.cfg
-sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" $directory/ktx/port3.cfg
-sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" $directory/ktx/port4.cfg
-safe_pattern=$(printf "%s\n" "$admin <$email>" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQUAKESV_ADMIN/${safe_pattern}/g" $directory/ktx/port1.cfg
-sed -i "s/NQUAKESV_ADMIN/${safe_pattern}/g" $directory/ktx/port2.cfg
-sed -i "s/NQUAKESV_ADMIN/${safe_pattern}/g" $directory/ktx/port3.cfg
-sed -i "s/NQUAKESV_ADMIN/${safe_pattern}/g" $directory/ktx/port4.cfg
-safe_pattern=$(printf "%s\n" "$remote_ip" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQUAKESV_IP/${safe_pattern}/g" $directory/ktx/port1.cfg
-sed -i "s/NQUAKESV_IP/${safe_pattern}/g" $directory/ktx/port2.cfg
-sed -i "s/NQUAKESV_IP/${safe_pattern}/g" $directory/ktx/port3.cfg
-sed -i "s/NQUAKESV_IP/${safe_pattern}/g" $directory/ktx/port4.cfg
 #/qtv/qtv.cfg
 if [ "$qtv" == "y" ]
 then
 	safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
 	sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" $directory/qtv/qtv.cfg
-	safe_pattern=$(printf "%s\n" "$remote_ip" | sed 's/[][\.*^$/]/\\&/g')
-	sed -i "s/NQUAKESV_IP/${safe_pattern}/g" $directory/qtv/qtv.cfg
 	safe_pattern=$(printf "%s\n" "$qtvpass" | sed 's/[][\.*^$/]/\\&/g')
 	sed -i "s/NQUAKESV_QTVPASS/${safe_pattern}/g" $directory/qtv/qtv.cfg
 	cd qtv
@@ -395,177 +392,61 @@ then
 fi
 echo "done"
 
-# Remove excess ports
+# Fix port files etc
 echo -n "* Adjusting amount of ports..."
-if [ "$ports" == "4" ]
-then
+i=1
+while [ $i -le $ports ]; do
+	# Fix port number
+	if [ $i -gt 9 ]; then
+		port=285$i
+	else
+		port=2850$i
+	fi
+	# Copy port scripts/configs
+	cp $directory/run/portx.sh $directory/run/port$i.sh
+	cp $directory/ktx/portx.cfg $directory/ktx/port$i.cfg
+	# Fix shell scripts
+    	safe_pattern=$(printf "%s\n" "./mvdsv -port $port -game ktx +exec port$i.cfg" | sed 's/[][\.*^$/]/\\&/g')
+  	sed -i "s/NQUAKESV_RUN_MVDSV/${safe_pattern}/g" $directory/run/port$i.sh
+	# Fix /ktx/port1-10.cfg
+	safe_pattern=$(printf "%s\n" "$hostname #$i" | sed 's/[][\.*^$/]/\\&/g')
+	sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" $directory/ktx/port$i.cfg
+	safe_pattern=$(printf "%s\n" "$admin <$email>" | sed 's/[][\.*^$/]/\\&/g')
+	sed -i "s/NQUAKESV_ADMIN/${safe_pattern}/g" $directory/ktx/port$i.cfg
+	safe_pattern=$(printf "%s\n" "$remote_ip:$port" | sed 's/[][\.*^$/]/\\&/g')
+	sed -i "s/NQUAKESV_IP/${safe_pattern}/g" $directory/ktx/port$i.cfg
+	safe_pattern=$(printf "%s\n" "$port" | sed 's/[][\.*^$/]/\\&/g')
+	sed -i "s/NQUAKESV_PORT/${safe_pattern}/g" $directory/ktx/port$i.cfg
+	# Fix /qtv/qtv.cfg
+	echo "qtv $hostdns:$port" >> $directory/qtv/qtv.cfg
+	# Fix start_servers.sh script
         echo >> $directory/start_servers.sh
-        echo "echo -n \"* Starting mvdsv (port 28502)...\"" >> $directory/start_servers.sh
-        echo "if ps ax | grep -v grep | grep \"mvdsv -port 28502\" > /dev/null" >> $directory/start_servers.sh
+        echo "echo -n \"* Starting mvdsv (port $port)...\"" >> $directory/start_servers.sh
+        echo "if ps ax | grep -v grep | grep \"mvdsv -port $port\" > /dev/null" >> $directory/start_servers.sh
         echo "then" >> $directory/start_servers.sh
         echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
         echo "else" >> $directory/start_servers.sh
-        echo "./run/port2.sh > /dev/null &" >> $directory/start_servers.sh
+        echo "./run/port$i.sh > /dev/null &" >> $directory/start_servers.sh
         echo "echo \"[OK]\"" >> $directory/start_servers.sh
         echo "fi" >> $directory/start_servers.sh
-        echo >> $directory/start_servers.sh
-        echo "echo -n \"* Starting mvdsv (port 28503)...\"" >> $directory/start_servers.sh
-        echo "if ps ax | grep -v grep | grep \"mvdsv -port 28503\" > /dev/null" >> $directory/start_servers.sh
-        echo "then" >> $directory/start_servers.sh
-        echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-        echo "else" >> $directory/start_servers.sh
-        echo "./run/port3.sh > /dev/null &" >> $directory/start_servers.sh
-        echo "echo \"[OK]\"" >> $directory/start_servers.sh
-        echo "fi" >> $directory/start_servers.sh
-        echo >> $directory/start_servers.sh
-        echo "echo -n \"* Starting mvdsv (port 28504)...\"" >> $directory/start_servers.sh
-        echo "if ps ax | grep -v grep | grep \"mvdsv -port 28504\" > /dev/null" >> $directory/start_servers.sh
-        echo "then" >> $directory/start_servers.sh
-        echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-        echo "else" >> $directory/start_servers.sh
-        echo "./run/port4.sh > /dev/null &" >> $directory/start_servers.sh
-        echo "echo \"[OK]\"" >> $directory/start_servers.sh
-        echo "fi" >> $directory/start_servers.sh
-        # Fix upgrade script
-        # 28501
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_1_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28501\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_1/${safe_pattern}/g" $directory/update_binaries.sh
-        # 28502
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_2_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28502\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_2/${safe_pattern}/g" $directory/update_binaries.sh
-        # 28503
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_3_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28503\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_3/${safe_pattern}/g" $directory/update_binaries.sh
-        # 28504
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_4_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28504\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_4/${safe_pattern}/g" $directory/update_binaries.sh
-        # Fix QTV config
-        sed -i "s/#NQUAKESV_PORT1//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT2//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT3//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT4//g" $directory/qtv/qtv.cfg
-fi
-if [ "$ports" == "3" ]
-then
-	rm -rf $directory/run/port4.sh $directory/ktx/port4.cfg
-        echo >> $directory/start_servers.sh
-        echo "echo -n \"* Starting mvdsv (port 28502)...\"" >> $directory/start_servers.sh
-        echo "if ps ax | grep -v grep | grep \"mvdsv -port 28502\" > /dev/null" >> $directory/start_servers.sh
-        echo "then" >> $directory/start_servers.sh
-        echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-        echo "else" >> $directory/start_servers.sh
-        echo "./run/port2.sh > /dev/null &" >> $directory/start_servers.sh
-        echo "echo \"[OK]\"" >> $directory/start_servers.sh
-        echo "fi" >> $directory/start_servers.sh
-        echo >> $directory/start_servers.sh
-        echo "echo -n \"* Starting mvdsv (port 28503)...\"" >> $directory/start_servers.sh
-        echo "if ps ax | grep -v grep | grep \"mvdsv -port 28503\" > /dev/null" >> $directory/start_servers.sh
-        echo "then" >> $directory/start_servers.sh
-        echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-        echo "else" >> $directory/start_servers.sh
-        echo "./run/port3.sh > /dev/null &" >> $directory/start_servers.sh
-        echo "echo \"[OK]\"" >> $directory/start_servers.sh
-        echo "fi" >> $directory/start_servers.sh
-        # Fix upgrade script
-        # 28501
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_1_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28501\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_1/${safe_pattern}/g" $directory/update_binaries.sh
-        # 28502
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_2_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28502\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_2/${safe_pattern}/g" $directory/update_binaries.sh
-        # 28503
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_3_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28503\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_3/${safe_pattern}/g" $directory/update_binaries.sh
-        # Fix QTV config
-        sed -i "s/#NQUAKESV_PORT1//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT2//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT3//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT4/#/g" $directory/qtv/qtv.cfg
-fi
-if [ "$ports" == "2" ]
-then
-        rm -rf $directory/run/port3.sh $directory/ktx/port3.cfg $directory/run/port4.sh $directory/ktx/port4.cfg
-        echo >> $directory/start_servers.sh
-        echo "echo -n \"* Starting mvdsv (port 28502)...\"" >> $directory/start_servers.sh
-        echo "if ps ax | grep -v grep | grep \"mvdsv -port 28502\" > /dev/null" >> $directory/start_servers.sh
-        echo "then" >> $directory/start_servers.sh
-        echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-        echo "else" >> $directory/start_servers.sh
-        echo "./run/port2.sh > /dev/null &" >> $directory/start_servers.sh
-        echo "echo \"[OK]\"" >> $directory/start_servers.sh
-        echo "fi" >> $directory/start_servers.sh
-	# Fix upgrade script
-        # 28501
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_1_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28501\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_1/${safe_pattern}/g" $directory/update_binaries.sh
-        # 28502
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_2_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28502\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_2/${safe_pattern}/g" $directory/update_binaries.sh
-        # Fix QTV config
-        sed -i "s/#NQUAKESV_PORT1//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT2//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT3/#/g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT4/#/g" $directory/qtv/qtv.cfg
-fi
-if [ "$ports" == "1" ]
-then
-	rm -rf $directory/run/port2.sh $directory/ktx/port2.cfg $directory/run/port3.sh $directory/ktx/port3.cfg $directory/run/port4.sh $directory/ktx/port4.cfg
-	# Fix upgrade script
-        # 28501
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_1_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"mvdsv -port 28501\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_SERVER_1/${safe_pattern}/g" $directory/update_binaries.sh
-        # Fix QTV config
-        sed -i "s/#NQUAKESV_PORT1//g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT2/#/g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT3/#/g" $directory/qtv/qtv.cfg
-        sed -i "s/#NQUAKESV_PORT4/#/g" $directory/qtv/qtv.cfg
-fi
+        # Fix stop_servers.sh script
+        echo >> $directory/stop_servers.sh
+        echo "# Kill $port" >> $directory/stop_servers.sh
+	echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/port$i.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
+	echo "pid=\`ps ax | grep -v grep | grep \"mvdsv -port $port\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
+	let i=i+1
+done
+rm -rf $directory/ktx/portx.cfg
+rm -rf $directory/run/portx.sh
 echo "done"
 
 # Add QTV
 if [ "$qtv" = "y" ]
 then
-	echo -n "* Adding qtv to startup scripts..."
+	echo -n "* Adding qtv to start/stop scripts..."
+	# start_servers.sh
 	echo >> $directory/start_servers.sh
 	echo "echo -n \"* Starting qtv (port 28000)...\"" >> $directory/start_servers.sh
 	echo "if ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" > /dev/null" >> $directory/start_servers.sh
@@ -575,13 +456,13 @@ then
 	echo "./run/qtv.sh > /dev/null &" >> $directory/start_servers.sh
 	echo "echo \"[OK]\"" >> $directory/start_servers.sh
 	echo "fi" >> $directory/start_servers.sh
-        # Fix upgrade script
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_QTV_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_QTV/${safe_pattern}/g" $directory/update_binaries.sh
+	# stop_servers.sh
+	echo >> $directory/stop_servers.sh
+	echo "# Kill QTV" >> $directory/stop_servers.sh
+	echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qtv.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
+	echo "pid=\`ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
 	echo "done"
 else
 	echo -n "* Removing qtv files..."
@@ -592,7 +473,8 @@ fi
 # Add/remove qwfwd
 if [ "$qwfwd" = "y" ]
 then
-        echo -n "* Adding qwfwd to startup scripts..."
+	# start_servers.sh
+        echo -n "* Adding qwfwd to start/stop scripts..."
         echo >> $directory/start_servers.sh
     	echo "echo -n \"* Starting qwfwd (port 30000)...\"" >> $directory/start_servers.sh
         echo "if ps ax | grep -v grep | grep \"qwfwd.bin\" > /dev/null" >> $directory/start_servers.sh
@@ -602,13 +484,13 @@ then
         echo "./run/qwfwd.sh > /dev/null &" >> $directory/start_servers.sh
     	echo "echo \"[OK]\"" >> $directory/start_servers.sh
         echo "fi" >> $directory/start_servers.sh
-        # Fix upgrade script
-        replace="if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_QWFWD_PID/${safe_pattern}/g" $directory/update_binaries.sh
-        replace="pid=\`ps ax | grep -v grep | grep \"qwfwd.bin\" | awk '{print \$1}'\`"
-        safe_pattern=$(printf "%s\n" "$replace" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/#NQUAKESV_KILL_QWFWD/${safe_pattern}/g" $directory/update_binaries.sh
+        # stop_servers.sh
+	echo >> $directory/stop_servers.sh
+	echo "# Kill QWFWD" >> $directory/stop_servers.sh
+	echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qwfwd.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
+	echo "pid=\`ps ax | grep -v grep | grep \"qwfwd.bin\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
         echo "done"
 else
 	echo -n "* Removing qwfwd files..."
@@ -618,7 +500,5 @@ fi
 
 echo;echo "To make sure your servers are always running, type \"crontab -e\" and add the following:"
 echo;echo "*/10 * * * * $directory/start_servers.sh >/dev/null 2>&1"
-echo "0 5 * * 2 $directory/update_maps.sh --random-mirror >/dev/null 2>&1"
-echo;echo "The second line updates the map pool every week (optional)."
-echo;echo "Installation complete."
+echo;echo "Installation complete. Please read the README in $directory."
 echo

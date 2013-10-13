@@ -1,23 +1,17 @@
 nQuakesv for Linux
 ==================
-To install nQuakesv, locate the installer tarball (nquakesvXX_installer.tar.gz
-where XX is a number) and extract it.
+To install nQuakesv, locate the installer tarball and extract it.
 
 
-$ tar xvzf nquakesv10_installer.tar.gz
+$ tar xvzf nquakesv11_installer.tar.gz
 
-
-The version of the installer may vary (in this case 10), so try typing nquakesv
-and then pressing tab to let the console auto-complete the filename if you are
-unsure.
 
 Once you have extracted the package, change directory to the folder that was
 created (same as the package but without .tar.gz), run the install script and
-follow the instructions. You can use tab to auto-complete the folder name here
-as well.
+follow the instructions.
 
 
-$ cd nquakesv10_installer/
+$ cd nquakesv11_installer/
 $ ./install_nquakesv.sh
 
 
@@ -31,4 +25,4 @@ your servers will be up and running in about 10 minutes.
 
 Thank you for downloading nQuakesv
 -
-2012-08-20
+2012-08-24
