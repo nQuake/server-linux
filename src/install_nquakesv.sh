@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# nQuakesv Installer Script v1.3 (for Linux)
+# nQuakesv Installer Script v1.4 (for Linux)
 # by Empezar & dimman
 
 defaultdir="~/nquakesv"
@@ -24,7 +24,7 @@ which unzip >/dev/null || error "The package 'unzip' is not installed. Please in
 which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the nQuakesv installation again."
 
 echo
-echo "Welcome to the nQuakesv v1.3 installation"
+echo "Welcome to the nQuakesv v1.4 installation"
 echo "========================================="
 echo
 echo "Press ENTER to use [default] option."
@@ -150,7 +150,7 @@ fi
 echo
 
 # Download nquake.ini
-wget --inet4-only -q -O nquake.ini http://nquake.sourceforge.net/nquake.ini || error "Failed to download nquake.ini"
+wget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini || error "Failed to download nquake.ini"
 [ -s "nquake.ini" ] || error "Downloaded nquake.ini but file is empty?! Exiting."
 
 # List all the available mirrors
