@@ -102,7 +102,7 @@ read email
 [ ! -z "$email" ] || email=$defaultemail
 
 # Rcon
-defaultrcon="changeme"
+defaultrcon="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo)"
 printf "What should the rcon password be? [$defaultrcon]: " 
 read rcon
 [ ! -z "$rcon" ] || {
@@ -116,7 +116,7 @@ read rcon
 if [ "$qtv" = "y" ]
 then
 	# Qtv password
-	defaultqtvpass="changeme"
+	defaultqtvpass="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo)"
 	printf "What should the qtv admin password be? [$defaultqtvpass]: " 
 	read qtvpass
 	[ ! -z "$qtvpass" ] || {
