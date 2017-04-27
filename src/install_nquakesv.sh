@@ -10,7 +10,7 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive] [-h|--hostname=<ho
                            [-p|--number-of-ports=<count>] [-t|--qtv] [-f|--qwfwd]
                            [-a|--admin=<name>] [-e|--admin-email=<email>]
                            [-r|--rcon-password=<password>] [-y|--qtv-password=<password>]
-                           [-s|--search-pak[=<path>]] [-q|--quiet] [-qq|--extra-quiet]
+                           [-s|--search-pak[=<path>]] [-q|--quiet] [-qq|--extra-quiet] [TARGETDIR]
 
     -h, --help              display this help and exit.
     -n, --non-interactive   non-interactive mode (use defaults or command line
