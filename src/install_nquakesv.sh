@@ -130,8 +130,8 @@ defaultqtv=$([ ! -z "$nqinstallqtv" ] && echo $nqinstallqtv || echo "n")
 defaultqwfwd=$([ ! -z "$nqinstallqwfwd" ] && echo $nqinstallqwfwd || echo "n")
 defaultadmin=$([ ! -z "$nqadmin" ] && echo $nqadmin || echo $USER)
 defaultemail=$([ ! -z "$nqemail" ] && echo $nqemail || echo "$defaultadmin@example.com")
-defaultrcon=$([ ! -z "$nqrcon" ] && echo $nqrcon || echo "changeme")
-defaultqtvpass=$([ ! -z "$nqqtvpassword" ] && echo $nqqtvpassword || echo "changeme")
+defaultrcon=$([ ! -z "$nqrcon" ] && echo $nqrcon || echo "$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo)")
+defaultqtvpass=$([ ! -z "$nqqtvpassword" ] && echo $nqqtvpassword || echo "$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo)")
 defaultsearchoption=$([ "$nqsearchpak" = "y" ] && echo "y" || echo "n")
 defaultsearchdir=$([ "$defaultsearchoption" = "y" ] && [ ! -z "$searchdir" ] && echo $searchdir || echo "~/")
 
@@ -212,12 +212,6 @@ if [ -z "$noninteractive" ]; then
 	# Rcon
 	printf "What should the rcon password be? [$defaultrcon]: "
 	read rcon
-	[ -z "$rcon" ] && [ -z "$nondefaultrcon" ] && {
-		nqecho
-		nqecho "Your rcon has been set to $defaultrcon. This is an enormous security risk."
-		nqecho "To change this, edit $directory/ktx/pwd.cfg"
-		nqecho
-	}
 
 	# QTV
 	printf "Do you wish to run a qtv proxy? (y/n) [$defaultqtv]: "
@@ -225,12 +219,6 @@ if [ -z "$noninteractive" ]; then
 	if [ "$qtv" = "y" ]; then
 		printf "What should the qtv admin password be? [$defaultqtvpass]: "
 		read qtvpass
-		[ -z "$qtvpass" ] && {
-			nqecho
-			nqecho "Your qtv password has been set to $defaultqtvpass. This is not recommended."
-			nqecho "To change this, edit $directory/qtv/qtv.cfg"
-			nqecho
-		}
 	fi
 
 	# QWFWD
