@@ -1,7 +1,4 @@
-nQuakesv for Linux
-======
-
-### Installation procedure
+## Install
 
 Run the following in a Linux shell:
 
