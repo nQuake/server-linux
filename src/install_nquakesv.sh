@@ -15,8 +15,6 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive] [-h|--hostname=<ho
     -h, --help              display this help and exit.
     -n, --non-interactive   non-interactive mode (use defaults or command line
                             parameters, and do not prompt for anything).
-    -e, --use-env           use .env file to generate config files at mvdsv
-                            startup. Useful for Docker installations.
     -q, --quiet             do not output informative messages during setup. this
                             will not silence messages that require interaction.
     -qq, --extra-quiet      do not output errors during setup.
@@ -58,10 +56,6 @@ for i in "$@"; do
     -h|--help)
       show_help
       exit 0
-      ;;
-    -e|--use-env)
-      useenv=1
-      shift
       ;;
     -n|--non-interactive)
       noninteractive=1
@@ -128,7 +122,6 @@ for i in "$@"; do
 done
 
 # Defaults (use cmdline parameters)
-defaultuseenv=${useenv:-0}
 defaultdir=${nqinstalldir:-\~/nquakesv}
 defaulthostname=${nqhostname:-"KTX Allround"}
 defaultports=${nqnumports:-4}
@@ -451,11 +444,11 @@ echo ${hostname} > ~/.nquakesv/hostname
 echo ${hostdns} > ~/.nquakesv/hostdns
 echo ${remote_ip} > ~/.nquakesv/ip
 echo "${admin} <${email}>" > ~/.nquakesv/admin
-# Generate .env file
-echo "SV_HOSTNAME=\"${hostname}\"" > ${directory}/.env
-echo "SV_ADMININFO=\"${admin} <${email}>\"" >> ${directory}/.env
-echo "SV_RCON=\"${rcon}\">" >> ${directory}/.env
-echo "SV_QTVPASS=\"${qtvpass}\"" >> ${directory}/.env
+# Generate config file
+echo "SV_HOSTNAME=\"${hostname}\"" > ~/.nquakesv/config
+echo "SV_ADMININFO=\"${admin} <${email}>\"" >> ~/.nquakesv/config
+echo "SV_RCON=\"${rcon}\">" >> ~/.nquakesv/config
+echo "SV_QTVPASS=\"${qtvpass}\"" >> ~/.nquakesv/config
 # qtv
 [ "{$qtv}" = "y" ] && {
   echo 28000 > ~/.nquakesv/qtv

@@ -1,0 +1,5 @@
+SV_HOSTNAME="KTX Allround"
+SV_SERVERIP="127.0.0.1"
+SV_ADMININFO="Empezar <empezar@example.com>"
+SV_RCON="myrconpassword"
+SV_QTVPASS="myqtvpassword"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPTFOLDER=$(dirname `realpath $0`)
-source ${SCRIPTFOLDER}/.env
+source ~/.nquakesv/config
 
 function generate_server_config {
   echo "rcon_password \"${SV_RCON}\"" > ktx/pwd.cfg
