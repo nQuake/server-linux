@@ -32,7 +32,7 @@ echo "*/10 * * * * \$(cat ~/.nquakesv/install_dir)/start_servers.sh >/dev/null 2
 
 Settings are contained in `~/.nquakesv/config`.
 
-Whenever settings are changed, you need to run `./stop_servers.sh` and then `./start_servers.sh`.
+To apply settings, you need to restart nQuakesv.
 
 ### Change number of ports
 
