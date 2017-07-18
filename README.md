@@ -6,6 +6,28 @@ Run the following in a Linux shell:
 bash <(curl -s https://raw.githubusercontent.com/nQuake/server-linux/master/src/install_nquakesv.sh)
 ```
 
+## Running nQuakesv
+
+```
+$(cat ~/.nquakesv/install_dir)/start_servers.sh
+```
+
+## Stopping nQuakesv
+
+```
+$(cat ~/.nquakesv/install_dir)/stop_servers.sh
+```
+
+## Crontab
+
+During installation, you can choose to install nQuakesv in your crontab.
+
+To do this manually:
+
+```
+echo "*/10 * * * * \$(cat ~/.nquakesv/install_dir)/start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
+```
+
 ## Settings
 
 Settings are contained in `~/.nquakesv/config`.
