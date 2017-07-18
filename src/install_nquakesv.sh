@@ -468,44 +468,10 @@ i=1
 while [ ${i} -le ${ports} ]; do
   # Fix port number
   [ ${i} -gt 9 ] && port=285${i} || port=2850${i}
-  # Copy port scripts/configs
-  cp ${directory}/run/portx.sh ${directory}/run/port${i}.sh
-  cp ${directory}/ktx/portx.cfg ${directory}/ktx/port${i}.cfg
-  # Fix shell scripts
-  safe_pattern=$(printf "%s\n" "./mvdsv -port $port -game ktx +exec port${i}.cfg" | sed 's/[][\.*^$/]/\\&/g')
-  sed -i "s/NQUAKESV_RUN_MVDSV/${safe_pattern}/g" ${directory}/run/port${i}.sh
-  # Fix /ktx/port1-10.cfg
-  safe_pattern=$(printf "%s\n" "${hostname} #${i}" | sed 's/[][\.*^$/]/\\&/g')
-  sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" ${directory}/ktx/port${i}.cfg
-  safe_pattern=$(printf "%s\n" "${admin} <${email}>" | sed 's/[][\.*^$/]/\\&/g')
-  sed -i "s/NQUAKESV_ADMIN/${safe_pattern}/g" ${directory}/ktx/port${i}.cfg
-  safe_pattern=$(printf "%s\n" "${remote_ip}:${port}" | sed 's/[][\.*^$/]/\\&/g')
-  sed -i "s/NQUAKESV_IP/${safe_pattern}/g" ${directory}/ktx/port${i}.cfg
-  safe_pattern=$(printf "%s\n" "${port}" | sed 's/[][\.*^$/]/\\&/g')
-  sed -i "s/NQUAKESV_PORT/${safe_pattern}/g" ${directory}/ktx/port${i}.cfg
   # Fix /qtv/qtv.cfg
   echo "qtv ${hostdns}:${port}" >> ${directory}/qtv/qtv.cfg
-  # Fix start_servers.sh script
-  echo >> ${directory}/start_servers.sh
-  echo "printf \"* Starting mvdsv (port ${port})...\"" >> ${directory}/start_servers.sh
-  echo "if ps ax | grep -v grep | grep \"mvdsv -port ${port}\" > /dev/null" >> ${directory}/start_servers.sh
-  echo "then" >> ${directory}/start_servers.sh
-  echo "echo \"[ALREADY RUNNING]\"" >> ${directory}/start_servers.sh
-  echo "else" >> ${directory}/start_servers.sh
-  echo "./run/port${i}.sh > /dev/null &" >> ${directory}/start_servers.sh
-  echo "echo \"[OK]\"" >> ${directory}/start_servers.sh
-  echo "fi" >> ${directory}/start_servers.sh
-  # Fix stop_servers.sh script
-  echo >> ${directory}/stop_servers.sh
-  echo "# Kill ${port}" >> ${directory}/stop_servers.sh
-  echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/port${i}.sh\" | awk '{print \$1}'\`" >> ${directory}/stop_servers.sh
-  echo "[ \"\${pid}\" != \"\" ] && kill -9 \${pid}" >> ${directory}/stop_servers.sh
-  echo "pid=\`ps ax | grep -v grep | grep \"mvdsv -port ${port}\" | awk '{print \$1}'\`" >> ${directory}/stop_servers.sh
-  echo "[ \"\${pid}\" != \"\" ] && kill -9 \${pid}" >> ${directory}/stop_servers.sh
   i=$((i+1))
 done
-rm -rf ${directory}/ktx/portx.cfg
-rm -rf ${directory}/run/portx.sh
 nqecho "done"
 
 # Add QTV
