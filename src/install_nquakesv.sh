@@ -560,10 +560,15 @@ nqecho "done"
   (rm -rf ${directory}/qwfwd ${directory}/run/qwfwd.sh && nqecho done) || nqecho fail
 }
 
-nqecho
-nqecho "To make sure your servers are always running, type \"crontab -e\" and add the following:"
-nqecho
-nqecho "*/10 * * * * ${directory}/start_servers.sh >/dev/null 2>&1"
+[ -d "/etc/cron.d" ] && {
+  nqecho
+  nqnecho "Add nQuake server to crontab (ensures servers are always on) [y/N]: "
+  read addcron
+  [ "${addcron}" = "y" ] && {
+    echo "*/10 * * * * ${directory}/start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
+  }
+}
+
 nqecho
 nqecho "Installation complete. Please read the README in ${directory}."
 nqecho
