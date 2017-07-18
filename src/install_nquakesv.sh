@@ -440,8 +440,6 @@ nqecho "done"
 nqnecho "* Updating configuration files..."
 mkdir -p ~/.nquakesv
 echo ${directory} > ~/.nquakesv/install_dir
-echo ${hostname} > ~/.nquakesv/hostname
-echo ${hostdns} > ~/.nquakesv/hostdns
 echo ${remote_ip} > ~/.nquakesv/ip
 echo "${admin} <${email}>" > ~/.nquakesv/admin
 # Generate config file
