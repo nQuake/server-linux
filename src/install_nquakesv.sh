@@ -285,9 +285,9 @@ nqnecho "Search for pak1:     "
 nqecho "========================================="
 
 [ -z "${noninteractive}" ] && {
-        nqecho
-        nqecho "Press any key to continue..."
-        read review
+  nqecho
+  nqecho "Press any key to continue..."
+  read review
 }
 
 # Adjust invalid ports
@@ -452,93 +452,31 @@ echo ${hostdns} > ~/.nquakesv/hostdns
 echo ${remote_ip} > ~/.nquakesv/ip
 echo "${admin} <${email}>" > ~/.nquakesv/admin
 # Generate .env file
-echo "SV_HOSTNAME=${hostname}" > ${directory}/.env
-echo "SV_ADMININFO=${admin} <${email}>" >> ${directory}/.env
-#/ktx/pwd.cfg
-safe_pattern=$(printf "%s\n" "$rcon" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQUAKESV_RCON/${safe_pattern}/g" ${directory}/ktx/pwd.cfg
-#/qtv/qtv.cfg
+echo "SV_HOSTNAME=\"${hostname}\"" > ${directory}/.env
+echo "SV_ADMININFO=\"${admin} <${email}>\"" >> ${directory}/.env
+echo "SV_RCON=\"${rcon}\">" >> ${directory}/.env
+echo "SV_QTVPASS=\"${qtvpass}\"" >> ${directory}/.env
+# qtv
 [ "{$qtv}" = "y" ] && {
-  safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-  sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" ${directory}/qtv/qtv.cfg
-  safe_pattern=$(printf "%s\n" "$qtvpass" | sed 's/[][\.*^$/]/\\&/g')
-  sed -i "s/NQUAKESV_QTVPASS/${safe_pattern}/g" ${directory}/qtv/qtv.cfg
-  cd qtv
-  ln -sf ../ktx/demos demos
-}
-#/qwfwd/qwfwd.cfg
+  echo 28000 > ~/.nquakesv/qtv
+  ln -s ${directory}/ktx/demos ${directory}/qtv/demos
+} || rm -rf rm -rf ${directory}/qtv ${directory}/run/qtv.sh ~/.nquakesv/qtv
+# qwfwd
 [ "$qwfwd" = "y" ] && {
-  safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-  sed -i "s/NQUAKESV_HOSTNAME/${safe_pattern}/g" ${directory}/qwfwd/qwfwd.cfg
-}
+  echo 30000 > ~/.nquakesv/qwfwd
+} || rm -rf ${directory}/qwfwd ${directory}/run/qwfwd.sh ~/.nquakesv/qwfwd
 nqecho "done"
 
-# Fix port files etc
+# Create port files
 nqnecho "* Adjusting amount of ports..."
 mkdir -p ~/.nquakesv/ports
 i=1
 while [ ${i} -le ${ports} ]; do
-  # Fix port number
   [ ${i} -gt 9 ] && port=285${i} || port=2850${i}
-  # Create port file in ~/.nquakesv/ports
   touch ~/.nquakesv/ports/${port}
-  # Fix /qtv/qtv.cfg
-  echo "qtv ${hostdns}:${port}" >> ${directory}/qtv/qtv.cfg
   i=$((i+1))
 done
 nqecho "done"
-
-# Add QTV
-[ "$qtv" = "y" ] && {
-  nqnecho "* Adding qtv to start/stop scripts..."
-  # start_servers.sh
-  echo >> ${directory}/start_servers.sh
-  echo "printf \"* Starting qtv (port 28000)...\"" >> ${directory}/start_servers.sh
-  echo "if ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" > /dev/null" >> ${directory}/start_servers.sh
-  echo "then" >> ${directory}/start_servers.sh
-  echo "echo \"[ALREADY RUNNING]\"" >> ${directory}/start_servers.sh
-  echo "else" >> ${directory}/start_servers.sh
-  echo "./run/qtv.sh > /dev/null &" >> ${directory}/start_servers.sh
-  echo "echo \"[OK]\"" >> ${directory}/start_servers.sh
-  echo "fi" >> ${directory}/start_servers.sh
-  # stop_servers.sh
-  echo >> ${directory}/stop_servers.sh
-  echo "# Kill QWFWD" >> ${directory}/stop_servers.sh
-  echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qwfwd.sh\" | awk '{print \$1}'\`" >> ${directory}/stop_servers.sh
-  echo "[ \"\${pid}\" != \"\" ] && kill -9 \${pid}" >> ${directory}/stop_servers.sh
-  echo "pid=\`ps ax | grep -v grep | grep \"qwfwd.bin\" | awk '{print \$1}'\`" >> ${directory}/stop_servers.sh
-  echo "[ \"\${pid}\" != \"\" ] && kill -9 \${pid}" >> ${directory}/stop_servers.sh
-  nqecho "done"
-} || {
-  nqnecho "* Removing qtv files..."
-  (rm -rf ${directory}/qtv ${directory}/run/qtv.sh && nqecho done) || nqecho fail
-}
-
-# Add/remove qwfwd
-[ "$qwfwd" = "y" ] && {
-  # start_servers.sh
-  nqnecho "* Adding qwfwd to start/stop scripts..."
-  echo >> ${directory}/start_servers.sh
-  echo "echo -n \"* Starting qwfwd (port 30000)...\"" >> ${directory}/start_servers.sh
-  echo "if ps ax | grep -v grep | grep \"qwfwd.bin\" > /dev/null" >> ${directory}/start_servers.sh
-  echo "then" >> ${directory}/start_servers.sh
-  echo "echo \"[ALREADY RUNNING]\"" >> ${directory}/start_servers.sh
-  echo "else" >> ${directory}/start_servers.sh
-  echo "./run/qwfwd.sh > /dev/null &" >> ${directory}/start_servers.sh
-  echo "echo \"[OK]\"" >> ${directory}/start_servers.sh
-  echo "fi" >> ${directory}/start_servers.sh
-  # stop_servers.sh
-  echo >> ${directory}/stop_servers.sh
-  echo "# Kill QWFWD" >> ${directory}/stop_servers.sh
-  echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qwfwd.sh\" | awk '{print \$1}'\`" >> ${directory}/stop_servers.sh
-  echo "[ \"\${pid}\" != \"\" ] && kill -9 \${pid}" >> ${directory}/stop_servers.sh
-  echo "pid=\`ps ax | grep -v grep | grep \"qwfwd.bin\" | awk '{print \$1}'\`" >> ${directory}/stop_servers.sh
-  echo "[ \"\${pid}\" != \"\" ] && kill -9 \${pid}" >> ${directory}/stop_servers.sh
-  nqecho "done"
-} || {
-  nqnecho "* Removing qwfwd files..."
-  (rm -rf ${directory}/qwfwd ${directory}/run/qwfwd.sh && nqecho done) || nqecho fail
-}
 
 [ -d "/etc/cron.d" ] && {
   nqecho
