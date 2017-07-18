@@ -19,7 +19,7 @@ function generate_qtv_config {
   ip=$(cat ~/.nquakesv/ip)
   for f in ~/.nquakesv/ports/*; do
     port=$(basename ${f})
-    echo "qtv ${ip}:${port}" >> qtv/qtv.cfg
+    echo "qtv ${ip}:${port}" >> ${outputfile}
   done
 }
 
