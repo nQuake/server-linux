@@ -176,6 +176,13 @@ nqwget() {
   }
 }
 
+githubdl() {
+  localpath=$1
+  remotepath=$2
+  nqwget --inet4-only -q -O ${localpath} https://raw.githubusercontent.com/nQuake/server-linux/master/${remotepath}
+  chmod +x ${localpath}
+}
+
 # Check if unzip, curl & wget is installed
 which unzip >/dev/null || error "The package 'unzip' is not installed. Please install it and run the nQuakesv installation again."
 which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the nQuakesv installation again."
@@ -287,7 +294,6 @@ nqecho "========================================="
 [ "${ports}" -gt 10 ] && ports=10
 [ "${ports}" -lt 1 ] && ports=1
 
-nqecho
 nqecho "Installation proceeding..."
 
 # Create the nQuakesv folder
@@ -401,11 +407,11 @@ nqnecho "* Extracting nQuakesv configuration files..."
   (cp ${pak} ${directory}/id1/pak1.pak 2>/dev/null && nqecho done) || nqecho fail
 }
 nqnecho "* Downloading shell scripts..."
-nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/start_servers.sh || error "Failed to download start_servers.sh"
-nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/stop_servers.sh || error "Failed to download stop_servers.sh"
-nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/update_binaries.sh || error "Failed to download update_binaries.sh"
-nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/update_configs.sh || error "Failed to download update_configs.sh"
-nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/update_maps.sh || error "Failed to download update_maps.sh"
+(githubdl ${directory}/start_servers.sh scripts/start_servers.sh && \
+githubdl ${directory}/stop_servers.sh scripts/stop_servers.sh && \
+githubdl ${directory}/update_binaries.sh scripts/update_binaries.sh && \
+githubdl ${directory}/update_configs.sh scripts/update_configs.sh && \
+githubdl ${directory}/update_maps.sh scripts/update_maps.sh && echo done) || nqecho fail
 nqecho
 
 # Rename files
@@ -448,9 +454,6 @@ echo "${admin} <${email}>" > ~/.nquakesv/admin
 # Generate .env file
 echo "SV_HOSTNAME=${hostname}" > ${directory}/.env
 echo "SV_ADMININFO=${admin} <${email}>" >> ${directory}/.env
-#/start_servers.sh
-safe_pattern=$(printf "%s\n" "${directory}" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQUAKESV_PATH/${safe_pattern}/g" ${directory}/start_servers.sh
 #/ktx/pwd.cfg
 safe_pattern=$(printf "%s\n" "$rcon" | sed 's/[][\.*^$/]/\\&/g')
 sed -i "s/NQUAKESV_RCON/${safe_pattern}/g" ${directory}/ktx/pwd.cfg
