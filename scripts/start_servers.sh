@@ -4,8 +4,8 @@ SCRIPTFOLDER=$(dirname `realpath $0`)
 source ~/.nquakesv/config
 
 function generate_server_config {
-  echo "rcon_password \"${SV_RCON}\"" > ktx/pwd.cfg
-  echo "qtv_password \"${SV_QTVPASS}\"" >> ktx/pwd.cfg
+  echo "rcon_password \"${SV_RCON}\"" > ${SCRIPTFOLDER}/ktx/pwd.cfg
+  echo "qtv_password \"${SV_QTVPASS}\"" >> ${SCRIPTFOLDER}/ktx/pwd.cfg
 }
 
 function generate_qtv_config {
@@ -47,7 +47,7 @@ function generate_port_script {
   port=$1
   num=$2
   outputfile=$3
-  echo "while true; do ./mvdsv -port ${port} -game ktx +exec port${num}.cfg; done;" > ${outputfile}
+  echo "while true; do cd $(cat ~/.nquakesv/install_dir) && ./mvdsv -port ${port} -game ktx +exec port${num}.cfg; done;" > ${outputfile}
   chmod +x ${outputfile}
 }
 
@@ -79,7 +79,8 @@ done
   printf "* Starting qtv (port ${qtvport})..."
   count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
   [ ${count} -eq 0 ] && {
-    ./run/qtv.sh > /dev/null &
+    cd $(cat ~/.nquakesv/install_dir)/run
+    ./qtv.sh > /dev/null &
     echo "[OK]"
   } || echo "[ALREADY RUNNING]"
 }
@@ -90,7 +91,8 @@ done
   printf "* Starting qwfwd (port ${qwfwdport})..."
   count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
   [ ${count} -eq 0 ] && {
-    ./run/qwfwd.sh > /dev/null &
+    cd $(cat ~/.nquakesv/install_dir)/run
+    ./qwfwd.sh > /dev/null &
     echo "[OK]"
   } || echo "[ALREADY RUNNING]"
 }

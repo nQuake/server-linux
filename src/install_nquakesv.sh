@@ -445,7 +445,7 @@ echo "${admin} <${email}>" > ~/.nquakesv/admin
 # Generate config file
 echo "SV_HOSTNAME=\"${hostname}\"" > ~/.nquakesv/config
 echo "SV_ADMININFO=\"${admin} <${email}>\"" >> ~/.nquakesv/config
-echo "SV_RCON=\"${rcon}\">" >> ~/.nquakesv/config
+echo "SV_RCON=\"${rcon}\"" >> ~/.nquakesv/config
 echo "SV_QTVPASS=\"${qtvpass}\"" >> ~/.nquakesv/config
 # qtv
 [ "{$qtv}" = "y" ] && {
@@ -474,7 +474,7 @@ nqecho "done"
   nqnecho "Add nQuake server to crontab (ensures servers are always on) [y/N]: "
   read addcron
   [ "${addcron}" = "y" ] && {
-    echo "*/10 * * * * ${directory}/start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
+    echo "*/10 * * * * \$(cat ~/.nquakesv/install_dir)/start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
   }
 }
 
