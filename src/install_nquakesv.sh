@@ -460,11 +460,11 @@ echo "SV_QTVPASS=\"${qtvpass}\"" >> ${directory}/.env
 [ "{$qtv}" = "y" ] && {
   echo 28000 > ~/.nquakesv/qtv
   ln -s ${directory}/ktx/demos ${directory}/qtv/demos
-} || rm -rf rm -rf ${directory}/qtv ${directory}/run/qtv.sh ~/.nquakesv/qtv
+} || rm -f ~/.nquakesv/qtv
 # qwfwd
 [ "$qwfwd" = "y" ] && {
   echo 30000 > ~/.nquakesv/qwfwd
-} || rm -rf ${directory}/qwfwd ${directory}/run/qwfwd.sh ~/.nquakesv/qwfwd
+} || rm -f ~/.nquakesv/qwfwd
 nqecho "done"
 
 # Create port files
