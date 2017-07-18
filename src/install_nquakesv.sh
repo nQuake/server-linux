@@ -373,7 +373,6 @@ nqwget --inet4-only -O sv-configs.zip ${mirror}/sv-configs.zip || error "Failed 
 [ ! -s "sv-non-gpl.zip" ] && error "Downloaded sv-non-gpl.zip but file is empty?!"
 [ ! -s "sv-configs.zip" ] && error "Downloaded sv-configs.zip but file is empty?!"
 
-
 # Get remote IP address
 nqnecho "Resolving external IP address... "
 remote_ip=$(curl -s http://myip.dnsomatic.com)
@@ -401,6 +400,12 @@ nqnecho "* Extracting nQuakesv configuration files..."
   nqecho "* Copying pak1.pak..."
   (cp ${pak} ${directory}/id1/pak1.pak 2>/dev/null && nqecho done) || nqecho fail
 }
+nqnecho "* Downloading shell scripts..."
+nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/start_servers.sh || error "Failed to download start_servers.sh"
+nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/stop_servers.sh || error "Failed to download stop_servers.sh"
+nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/update_binaries.sh || error "Failed to download update_binaries.sh"
+nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/update_configs.sh || error "Failed to download update_configs.sh"
+nqwget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/server-linux/master/scripts/update_maps.sh || error "Failed to download update_maps.sh"
 nqecho
 
 # Rename files
@@ -440,6 +445,9 @@ echo ${hostname} > ~/.nquakesv/hostname
 echo ${hostdns} > ~/.nquakesv/hostdns
 echo ${remote_ip} > ~/.nquakesv/ip
 echo "${admin} <${email}>" > ~/.nquakesv/admin
+# Generate .env file
+echo "SV_HOSTNAME=${hostname}" > ${directory}/.env
+echo "SV_ADMININFO=${admin} <${email}>" >> ${directory}/.env
 #/start_servers.sh
 safe_pattern=$(printf "%s\n" "${directory}" | sed 's/[][\.*^$/]/\\&/g')
 sed -i "s/NQUAKESV_PATH/${safe_pattern}/g" ${directory}/start_servers.sh
@@ -464,10 +472,13 @@ nqecho "done"
 
 # Fix port files etc
 nqnecho "* Adjusting amount of ports..."
+mkdir -p ~/.nquakesv/ports
 i=1
 while [ ${i} -le ${ports} ]; do
   # Fix port number
   [ ${i} -gt 9 ] && port=285${i} || port=2850${i}
+  # Create port file in ~/.nquakesv/ports
+  touch ~/.nquakesv/ports/${port}
   # Fix /qtv/qtv.cfg
   echo "qtv ${hostdns}:${port}" >> ${directory}/qtv/qtv.cfg
   i=$((i+1))
