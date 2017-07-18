@@ -75,3 +75,9 @@ To disable qwfwd:
 ```
 rm ~/.nquakesv/qwfwd
 ```
+
+## Uninstallation
+
+```
+rm -rf $(cat ~/.nquakesv/install_dir) ~/.nquakesv
+```
