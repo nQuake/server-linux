@@ -23,12 +23,24 @@ function generate_qtv_config {
   done
 }
 
+function generate_qtv_script {
+  outputfile=${SCRIPTFOLDER}/run/qtv.sh
+  echo "while true; do cd $(cat ~/.nquakesv/install_dir) && ./qtv/qtv.bin +exec qtv.cfg; done;" > ${outputfile}
+  chmod +x ${outputfile}
+}
+
 function generate_qwfwd_config {
   port=$1
   outputfile=$2
   cp -r ${SCRIPTFOLDER}/qwfwd/qwfwd_template.cfg ${outputfile}
   echo "set hostname \"${SV_HOSTNAME} QWfwd\"" >> ${outputfile}
   echo "set net_port ${port}" >> ${outputfile}
+}
+
+function generate_qwfwd_script {
+  outputfile=${SCRIPTFOLDER}/run/qwfwd.sh
+  echo "while true; do cd $(cat ~/.nquakesv/install_dir) && ./qwfwd/qwfwd.bin; done;" > ${outputfile}
+  chmod +x ${outputfile}
 }
 
 function generate_port_config {
@@ -79,8 +91,8 @@ done
   printf "* Starting qtv (port ${qtvport})..."
   count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
   [ ${count} -eq 0 ] && {
-    cd $(cat ~/.nquakesv/install_dir)/run
-    ./qtv.sh > /dev/null &
+    generate_qtv_script
+    $(cat ~/.nquakesv/install_dir)/run/qtv.sh > /dev/null &
     echo "[OK]"
   } || echo "[ALREADY RUNNING]"
 }
@@ -91,8 +103,8 @@ done
   printf "* Starting qwfwd (port ${qwfwdport})..."
   count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
   [ ${count} -eq 0 ] && {
-    cd $(cat ~/.nquakesv/install_dir)/run
-    ./qwfwd.sh > /dev/null &
+    generate_qwfwd_script
+    $(cat ~/.nquakesv/install_dir)/run/qwfwd.sh > /dev/null &
     echo "[OK]"
   } || echo "[ALREADY RUNNING]"
 }
