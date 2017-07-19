@@ -28,7 +28,7 @@ $(cat ~/.nquakesv/install_dir)/stop_servers.sh
 
 During installation, you can choose to install nQuakesv in your crontab.
 
-To do this manually:
+To do this manually, add the following to your crontab (or put a file with the contents below in /etc/cron.d/):
 
 ```
 echo "*/10 * * * * \$(cat ~/.nquakesv/install_dir)/start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
