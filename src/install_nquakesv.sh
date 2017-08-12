@@ -1,7 +1,7 @@
 #!/bin/bash
-# nQuakesv Installer Script v1.6 (for Linux)
+# nQuakesv Installer Script v1.7 (for Linux)
 # by Empezar & dimman
-nqversion="1.6"
+nqversion="1.7"
 
 # Usage info
 show_help() {
