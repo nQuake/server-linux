@@ -18,15 +18,15 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive] [-h|--hostname=<ho
     -q, --quiet             do not output informative messages during setup. this
                             will not silence messages that require interaction.
     -qq, --extra-quiet      do not output errors during setup.
-    --hostname          hostname of the server.
-    --number-of-ports   number of ports to run.
-    --qtv               install qtv.
-    --qwfwd             install qwfwd proxy.
-    --admin             administrator name
-    --admin-email       administrator e-mail.
-    --rcon-password     rcon password.
-    --qtv-password      qtv password.
-    --search-pak        search for pak1.pak during setup, specify a directory
+    --hostname              hostname of the server.
+    --number-of-ports       number of ports to run.
+    --qtv                   install qtv.
+    --qwfwd                 install qwfwd proxy.
+    --admin                 administrator name
+    --admin-email           administrator e-mail.
+    --rcon-password         rcon password.
+    --qtv-password          qtv password.
+    --search-pak            search for pak1.pak during setup, specify a directory
                             to start searching there instead of in home folder.
 EOF
 }
