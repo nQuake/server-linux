@@ -9,14 +9,14 @@ generate_server_config() {
   outputfile=${SCRIPTFOLDER}/ktx/pwd.cfg
   echo "rcon_password \"${SV_RCON}\"" > ${inputfile}
   echo "qtv_password \"${SV_QTVPASS}\"" >> ${inputfile}
-  [ "$inputfile" != "$outputfile" ] && cp -fn ${inputfile} ${outputfile}
+  [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -fn ${inputfile} ${outputfile}
 }
 
 generate_qtv_config() {
   port=$1
   inputfile=$2
   outputfile=$3
-  [ "$inputfile" != "$outputfile" ] && cp -r ${inputfile} ${outputfile}
+  [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -r ${inputfile} ${outputfile}
   echo "hostname \"${SV_HOSTNAME} Qtv\"" >> ${outputfile}
   echo "admin_password \"${SV_QTVPASS}\"" >> ${outputfile}
   echo "mvdport ${port}" >> ${outputfile}
@@ -38,7 +38,7 @@ generate_qwfwd_config() {
   port=$1
   inputfile=${SCRIPTFOLDER}/qwfwd/qwfwd_template.cfg
   outputfile=$2
-  [ "$inputfile" != "$outputfile" ] && cp -r ${inputfile} ${outputfile}
+  [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -r ${inputfile} ${outputfile}
   echo "set hostname \"${SV_HOSTNAME} QWfwd\"" >> ${outputfile}
   echo "set net_port ${port}" >> ${outputfile}
 }
