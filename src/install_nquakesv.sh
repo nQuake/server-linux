@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # nQuakesv Installer Script v1.7 (for Linux)
 # by Empezar & dimman
 nqversion="1.7"
@@ -240,7 +240,7 @@ nqiecho
   # Search for Pak1
   printf "Do you want setup to search for pak1.pak? (y/n) [${defaultsearchoption}]: "
   read search
-  [[ "${search}" == "y" || ( "${defaultsearchoption}" == "y" && -z "${search}" ) ]] && {
+  [ "${search}" == "y" ] || (["${defaultsearchoption}" == "y" ] && [ -z "${search}" ]) && {
     printf "Enter path to recursively search for pak1.pak [${defaultsearchdir}]: "
     read path
   }
