@@ -80,19 +80,22 @@ start_port() {
     echo "* Starting MVDSV"
     generate_server_config
     generate_port_config 27500 1 ${SCRIPTFOLDER}/ktx/port1.cfg
-    $(cat ~/.nquakesv/install_dir)/mvdsv -port 27500 -game ktx +exec port1.cfg
+    cd $(cat ~/.nquakesv/install_dir)
+    ./mvdsv -port 27500 -game ktx +exec port1.cfg
   }
 
   [ "${runserver}" = "qtv" ] && {
     echo "* Starting QTV"
     generate_qtv_config 27500 ${SCRIPTFOLDER}/qtv/qtv.cfg
-    $(cat ~/.nquakesv/install_dir)/qtv $(cat ~/.nquakesv/install_dir)/qtv/qtv.bin +exec qtv.cfg
+    cd $(cat ~/.nquakesv/install_dir)
+    ./qtv/qtv.bin +exec qtv.cfg
   }
 
   [ "${runserver}" = "qwfwd" ] && {
     echo "* Starting QWFWD"
     generate_qwfwd_config 27500 ${SCRIPTFOLDER}/qwfwd/qwfwd.cfg
-    $(cat ~/.nquakesv/install_dir)/qwfwd/qwfwd.bin
+    cd $(cat ~/.nquakesv/install_dir)
+    ./qwfwd/qwfwd.bin
   }
 }
 
