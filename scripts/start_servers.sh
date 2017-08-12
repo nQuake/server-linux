@@ -75,25 +75,26 @@ start_port() {
 [ -f ~/.nquakesv/docker ] && {
   echo "* Detected Docker configuration"
   runserver=$(cat ~/.nquakesv/docker)
+  runport=$(cat ~/.nquakesv/docker-port)
 
   [ "${runserver}" = "mvdsv" ] && {
     echo "* Starting MVDSV"
     generate_server_config
-    generate_port_config 27500 1 ${SCRIPTFOLDER}/ktx/port1.cfg
+    generate_port_config ${runport:-27500} 1 ${SCRIPTFOLDER}/ktx/port1.cfg
     cd $(cat ~/.nquakesv/install_dir)
-    ./mvdsv -port 27500 -game ktx +exec port1.cfg
+    ./mvdsv -port ${runport:-27500} -game ktx +exec port1.cfg
   }
 
   [ "${runserver}" = "qtv" ] && {
     echo "* Starting QTV"
-    generate_qtv_config 27500 ${SCRIPTFOLDER}/qtv/qtv.cfg
+    generate_qtv_config ${runport:-27500} ${SCRIPTFOLDER}/qtv/qtv.cfg
     cd $(cat ~/.nquakesv/install_dir)
     ./qtv/qtv.bin +exec qtv.cfg
   }
 
   [ "${runserver}" = "qwfwd" ] && {
     echo "* Starting QWFWD"
-    generate_qwfwd_config 27500 ${SCRIPTFOLDER}/qwfwd/qwfwd.cfg
+    generate_qwfwd_config ${runport:-27500} ${SCRIPTFOLDER}/qwfwd/qwfwd.cfg
     cd $(cat ~/.nquakesv/install_dir)
     ./qwfwd/qwfwd.bin
   }
