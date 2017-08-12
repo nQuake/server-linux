@@ -87,70 +87,70 @@ start_port() {
 
   mkdir -p ~/.nquakesv/server/
 
-  [ ! -d ~/.nquakesv/server/demos ] && {
+  [ ! -L $installdir/ktx/demos ] && {
     echo "* Creating demos folder"
     cp -r $installdir/ktx/demos ~/.nquakesv/server/demos
     rm -rf $installdir/ktx/demos
     ln -s ~/.nquakesv/server/demos $installdir/ktx/demos
   }
 
-  [ ! -f ~/.nquakesv/server/qtv.cfg ] && {
+  [ ! -L $installdir/qtv/qtv_template.cfg ] && {
     echo "* Copying qtv.cfg to nquakesv configuration folder"
     cp $installdir/qtv/qtv_template.cfg ~/.nquakesv/server/qtv.cfg
     rm $installdir/qtv/qtv_template.cfg
     ln -s ~/.nquakesv/server/qtv.cfg $installdir/qtv/qtv_template.cfg
   }
 
-  [ ! -f ~/.nquakesv/server/qwfwd.cfg ] && {
+  [ ! -L $installdir/qwfwd/qwfwd_template.cfg ] && {
     echo "* Copying qwfwd.cfg to nquakesv configuration folder"
     cp $installdir/qwfwd/qwfwd_template.cfg ~/.nquakesv/server/qwfwd.cfg
     rm $installdir/qwfwd/qwfwd_template.cfg
     ln -s ~/.nquakesv/server/qwfwd.cfg $installdir/qwfwd/qwfwd_template.cfg
   }
 
-  [ ! -f ~/.nquakesv/server/port.cfg ] && {
+  [ ! -L $installdir/ktx/port_template.cfg ] && {
     echo "* Copying port.cfg to nquakesv configuration folder"
     cp $installdir/ktx/port_template.cfg ~/.nquakesv/server/port.cfg
     rm $installdir/ktx/port_template.cfg
     ln -s ~/.nquakesv/server/port.cfg $installdir/ktx/port_template.cfg
   }
 
-  [ ! -f ~/.nquakesv/server/ktx.cfg ] && {
+  [ ! -L $installdir/ktx/ktx.cfg ] && {
     echo "* Copying ktx.cfg to nquakesv configuration folder"
     cp $installdir/ktx/ktx.cfg ~/.nquakesv/server/ktx.cfg
     rm $installdir/ktx/ktx.cfg
     ln -s ~/.nquakesv/server/ktx.cfg $installdir/ktx/ktx.cfg
   }
 
-  [ ! -f ~/.nquakesv/server/mvdsv.cfg ] && {
+  [ ! -L $installdir/ktx/mvdsv.cfg ] && {
     echo "* Copying mvdsv.cfg to nquakesv configuration folder"
     cp $installdir/ktx/mvdsv.cfg ~/.nquakesv/server/mvdsv.cfg
     rm $installdir/ktx/mvdsv.cfg
     ln -s ~/.nquakesv/server/mvdsv.cfg $installdir/ktx/mvdsv.cfg
   }
 
-  [ ! -f ~/.nquakesv/server/passwords.cfg ] && {
+  [ ! -L $installdir/ktx/pwd.cfg ] && {
     echo "* Copying passwords.cfg to nquakesv configuration folder"
     cp $installdir/ktx/pwd.cfg ~/.nquakesv/server/passwords.cfg
     rm $installdir/ktx/pwd.cfg
     ln -s ~/.nquakesv/server/passwords.cfg $installdir/ktx/pwd.cfg
   }
 
-  [ ! -f ~/.nquakesv/server/matchless.cfg ] && {
+  [ ! -L $installdir/ktx/matchless.cfg ] && {
     echo "* Copying matchless.cfg to nquakesv configuration folder"
     cp $installdir/ktx/matchless.cfg ~/.nquakesv/server/matchless.cfg
     rm $installdir/ktx/matchless.cfg
     ln -s ~/.nquakesv/server/matchless.cfg $installdir/ktx/matchless.cfg
   }
 
-  [ ! -f ~/.nquakesv/server/vip_ip.cfg ] && {
+  [ ! -L $installdir/ktx/vip_ip.cfg ] && {
     echo "* Copying vip_ip.cfg to nquakesv configuration folder"
     cp $installdir/ktx/vip_ip.cfg ~/.nquakesv/server/vip_ip.cfg
     rm $installdir/ktx/vip_ip.cfg
     ln -s ~/.nquakesv/server/vip_ip.cfg $installdir/ktx/vip_ip.cfg
   }
 
-  [ ! -f ~/.nquakesv/server/ban_ip.cfg ] && {
+  [ ! -L $installdir/ktx/ban_ip.cfg ] && {
     echo "* Copying ban_ip.cfg to nquakesv configuration folder"
     cp $installdir/ktx/ban_ip.cfg ~/.nquakesv/server/ban_ip.cfg
     rm $installdir/ktx/ban_ip.cfg
