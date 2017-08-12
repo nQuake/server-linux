@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 
-SCRIPTFOLDER=$(dirname `realpath $0`)
-source ~/.nquakesv/config
+SCRIPTFOLDER=$(dirname `readlink -f "$0"`)
+. ~/.nquakesv/config
 
-function generate_server_config {
+generate_server_config() {
   echo "rcon_password \"${SV_RCON}\"" > ${SCRIPTFOLDER}/ktx/pwd.cfg
   echo "qtv_password \"${SV_QTVPASS}\"" >> ${SCRIPTFOLDER}/ktx/pwd.cfg
 }
 
-function generate_qtv_config {
+generate_qtv_config() {
   port=$1
   outputfile=$2
   cp -r ${SCRIPTFOLDER}/qtv/qtv_template.cfg ${outputfile}
@@ -23,13 +23,13 @@ function generate_qtv_config {
   done
 }
 
-function generate_qtv_script {
+generate_qtv_script() {
   outputfile=${SCRIPTFOLDER}/run/qtv.sh
   echo "screen -dmS qtv \$(cat ~/.nquakesv/install_dir)/qtv/qtv.bin +exec qtv.cfg" > ${outputfile}
   chmod +x ${outputfile}
 }
 
-function generate_qwfwd_config {
+generate_qwfwd_config() {
   port=$1
   outputfile=$2
   cp -r ${SCRIPTFOLDER}/qwfwd/qwfwd_template.cfg ${outputfile}
@@ -37,13 +37,13 @@ function generate_qwfwd_config {
   echo "set net_port ${port}" >> ${outputfile}
 }
 
-function generate_qwfwd_script {
+generate_qwfwd_script() {
   outputfile=${SCRIPTFOLDER}/run/qwfwd.sh
   echo "screen -dmS qwfwd \$(cat ~/.nquakesv/install_dir)/qwfwd/qwfwd.bin" > ${outputfile}
   chmod +x ${outputfile}
 }
 
-function generate_port_config {
+generate_port_config() {
   port=$1
   num=$2
   outputfile=$3
@@ -55,7 +55,7 @@ function generate_port_config {
   echo "qtv_streamport \"${port}\"" >> ${outputfile}
 }
 
-function generate_port_script {
+generate_port_script() {
   port=$1
   num=$2
   outputfile=$3
@@ -63,7 +63,7 @@ function generate_port_script {
   chmod +x ${outputfile}
 }
 
-function start_port {
+start_port() {
   port=$1
   num=$2
   generate_port_config ${port} ${num} ${SCRIPTFOLDER}/ktx/port${num}.cfg
