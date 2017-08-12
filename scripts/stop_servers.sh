@@ -32,9 +32,9 @@ done
 [ -f ~/.nquakesv/qwfwd ] && {
   qwfwdport=$(cat ~/.nquakesv/qwfwd)
   printf "* Stopping qwfwd (port ${qwfwdport})..."
-  count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
+  count=$(ps ax | grep -v grep | grep "qwfwd.bin" | wc -l)
   [ ${count} -gt 0 ] && {
-    pid=$(ps ax | grep -v grep | grep "./qwfwd.bin" | awk '{print $1}')
+    pid=$(ps ax | grep -v grep | grep "qwfwd.bin" | awk '{print $1}')
     kill -9 ${pid} >/dev/null
     echo "[OK]"
   } || echo "[NOT RUNNING]"

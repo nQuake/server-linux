@@ -25,7 +25,7 @@ function generate_qtv_config {
 
 function generate_qtv_script {
   outputfile=${SCRIPTFOLDER}/run/qtv.sh
-  echo "while true; do cd $(cat ~/.nquakesv/install_dir) && ./qtv/qtv.bin +exec qtv.cfg; done;" > ${outputfile}
+  echo "screen -dmS qtv \$(cat ~/.nquakesv/install_dir)/qtv/qtv.bin +exec qtv.cfg" > ${outputfile}
   chmod +x ${outputfile}
 }
 
@@ -39,7 +39,7 @@ function generate_qwfwd_config {
 
 function generate_qwfwd_script {
   outputfile=${SCRIPTFOLDER}/run/qwfwd.sh
-  echo "while true; do cd $(cat ~/.nquakesv/install_dir) && ./qwfwd/qwfwd.bin; done;" > ${outputfile}
+  echo "screen -dmS qwfwd \$(cat ~/.nquakesv/install_dir)/qwfwd/qwfwd.bin" > ${outputfile}
   chmod +x ${outputfile}
 }
 
@@ -59,7 +59,7 @@ function generate_port_script {
   port=$1
   num=$2
   outputfile=$3
-  echo "while true; do cd $(cat ~/.nquakesv/install_dir) && ./mvdsv -port ${port} -game ktx +exec port${num}.cfg; done;" > ${outputfile}
+  echo "screen -dmS qw_$port \$(cat ~/.nquakesv/install_dir)/mvdsv -port ${port} -game ktx +exec port${num}.cfg" > ${outputfile}
   chmod +x ${outputfile}
 }
 
