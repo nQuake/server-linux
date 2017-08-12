@@ -68,43 +68,69 @@ start_port() {
   num=$2
   generate_port_config ${port} ${num} ${SCRIPTFOLDER}/ktx/port${num}.cfg
   generate_port_script ${port} ${num} ${SCRIPTFOLDER}/run/port${num}.sh
-  ${SCRIPTFOLDER}/run/port${num}.sh >/dev/null &
+  ${SCRIPTFOLDER}/run/port${num}.sh > /dev/null &
 }
 
-generate_server_config
+# Run only one server if docker file exists
+[ -f ~/.nquakesv/docker ] && {
+  echo "* Detected Docker configuration"
+  runserver=$(cat ~/.nquakesv/docker)
 
-num=0
-for f in ~/.nquakesv/ports/*; do
-  num=$((${num}+1))
-  port=$(basename ${f})
-  count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
-  printf "* Starting mvdsv #${num} (port ${port})..."
-  [ ${count} -eq 0 ] && {
-    start_port ${port} ${num}
-    echo "[OK]"
-  } || echo "[ALREADY RUNNING]"
-done
-
-[ -f ~/.nquakesv/qtv ] && {
-  qtvport=$(cat ~/.nquakesv/qtv)
-  generate_qtv_config ${qtvport} ${SCRIPTFOLDER}/qtv/qtv.cfg
-  printf "* Starting qtv (port ${qtvport})..."
-  count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
-  [ ${count} -eq 0 ] && {
+  [ "${runserver}" = "mvdsv" ] && {
+    echo "* Starting MVDSV"
+    generate_server_config
+    generate_port_config 27500 1 ${SCRIPTFOLDER}/ktx/port1.cfg
+    generate_port_script 27500 1 ${SCRIPTFOLDER}/run/port1.sh
+    $(cat ~/.nquakesv/install_dir)/run/port1.sh
+  } || [ "${runserver}" = "qtv" ] && {
+    echo "* Starting QTV"
+    generate_qtv_config 27500 ${SCRIPTFOLDER}/qtv/qtv.cfg
     generate_qtv_script
-    $(cat ~/.nquakesv/install_dir)/run/qtv.sh > /dev/null &
-    echo "[OK]"
-  } || echo "[ALREADY RUNNING]"
+    $(cat ~/.nquakesv/install_dir)/run/qtv.sh
+  } || [ "${runserver}" = "qwfwd" ] && {
+    echo "* Starting QWFWD"
+    generate_qwfwd_config 27500 ${SCRIPTFOLDER}/qwfwd/qwfwd.cfg
+    generate_qwfwd_script
+    $(cat ~/.nquakesv/install_dir)/run/qwfwd.sh
+  }
 }
 
-[ -f ~/.nquakesv/qwfwd ] && {
-  qwfwdport=$(cat ~/.nquakesv/qwfwd)
-  generate_qwfwd_config ${qwfwdport} ${SCRIPTFOLDER}/qwfwd/qwfwd.cfg
-  printf "* Starting qwfwd (port ${qwfwdport})..."
-  count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
-  [ ${count} -eq 0 ] && {
-    generate_qwfwd_script
-    $(cat ~/.nquakesv/install_dir)/run/qwfwd.sh > /dev/null &
-    echo "[OK]"
-  } || echo "[ALREADY RUNNING]"
+[ ! -f ~/.nquakesv/docker ] && {
+  generate_server_config
+
+  num=0
+  for f in ~/.nquakesv/ports/*; do
+    num=$((${num}+1))
+    port=$(basename ${f})
+    count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
+    printf "* Starting mvdsv #${num} (port ${port})..."
+    [ ${count} -eq 0 ] && {
+      start_port ${port} ${num}
+      echo "[OK]"
+    } || echo "[ALREADY RUNNING]"
+  done
+
+  [ -f ~/.nquakesv/qtv ] && {
+    qtvport=$(cat ~/.nquakesv/qtv)
+    generate_qtv_config ${qtvport} ${SCRIPTFOLDER}/qtv/qtv.cfg
+    printf "* Starting qtv (port ${qtvport})..."
+    count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
+    [ ${count} -eq 0 ] && {
+      generate_qtv_script
+      $(cat ~/.nquakesv/install_dir)/run/qtv.sh > /dev/null &
+      echo "[OK]"
+    } || echo "[ALREADY RUNNING]"
+  }
+
+  [ -f ~/.nquakesv/qwfwd ] && {
+    qwfwdport=$(cat ~/.nquakesv/qwfwd)
+    generate_qwfwd_config ${qwfwdport} ${SCRIPTFOLDER}/qwfwd/qwfwd.cfg
+    printf "* Starting qwfwd (port ${qwfwdport})..."
+    count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
+    [ ${count} -eq 0 ] && {
+      generate_qwfwd_script
+      $(cat ~/.nquakesv/install_dir)/run/qwfwd.sh > /dev/null &
+      echo "[OK]"
+    } || echo "[ALREADY RUNNING]"
+  }
 }
