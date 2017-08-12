@@ -79,7 +79,7 @@ start_port() {
 [ -f ~/.nquakesv/docker ] && {
   echo "* Detected Docker configuration"
   runserver=${1:-mvdsv}
-  dockerport=${1:-27500}
+  dockerport=${2:-27500}
   ip=$(cat ~/.nquakesv/ip)
   echo "* Listening on IP: $ip"
 
