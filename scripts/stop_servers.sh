@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-function stop_port {
+stop_port() {
   port=$1
   pid=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | awk '{print $1}')
   kill -9 ${pid} >/dev/null
