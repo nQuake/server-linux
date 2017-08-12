@@ -76,6 +76,8 @@ start_port() {
   echo "* Detected Docker configuration"
   runserver=$(cat ~/.nquakesv/docker)
   runport=$(cat ~/.nquakesv/docker-port)
+  ip=$(cat ~/.nquakesv/ip)
+  echo "* Listening on IP: $ip"
 
   [ "${runserver}" = "mvdsv" ] && {
     echo "* Starting MVDSV"
