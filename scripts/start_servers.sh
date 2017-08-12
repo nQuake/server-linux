@@ -78,7 +78,7 @@ start_port() {
 # Run only one server if docker file exists
 [ -f ~/.nquakesv/docker ] && {
   echo "* Detected Docker configuration"
-  runserver=$(cat ~/.nquakesv/docker)
+  runserver=${1:-mvdsv}
   dockerport=${1:-27500}
   ip=$(cat ~/.nquakesv/ip)
   echo "* Listening on IP: $ip"
