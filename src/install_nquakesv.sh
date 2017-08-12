@@ -176,11 +176,10 @@ githubdl() {
   chmod +x ${localpath}
 }
 
-# Check if unzip, curl, wget, realpath and screen is installed
+# Check if unzip, curl, wget and screen is installed
 which unzip >/dev/null || error "The package 'unzip' is not installed. Please install it and run the nQuakesv installation again."
 which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the nQuakesv installation again."
 which wget >/dev/null || error "The package 'wget' is not installed. Please install it and run the nQuakesv installation again."
-which realpath >/dev/null || error "The package 'realpath' is not installed. Please install it and run the nQuakesv installation again."
 which screen >/dev/null || error "The package 'screen' is not installed. Please install it and run the nQuakesv installation again."
 
 nqecho
