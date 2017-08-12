@@ -129,8 +129,8 @@ defaultqtv=${nqinstallqtv:-n}
 defaultqwfwd=${nqinstallqwfwd:-n}
 defaultadmin=${nqadmin:-${USER}}
 defaultemail=${nqemail:-${defaultadmin}@example.com}
-defaultrcon=${nqrcon:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo)}
-defaultqtvpass=${nqqtvpassword:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12};echo)}
+defaultrcon=${nqrcon:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
+defaultqtvpass=${nqqtvpassword:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
 defaultsearchoption=${nqsearchpak:-n}
 defaultsearchdir=${searchdir:-\~/}
 
