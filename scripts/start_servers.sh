@@ -85,11 +85,11 @@ start_port() {
 
   mkdir -p ~/.nquakesv/server/
 
-  [ ! -d ~/.nquakesv/demos ] && {
+  [ ! -d ~/.nquakesv/server/demos ] && {
     echo "* Creating demos folder"
-    cp -r $installdir/ktx/demos ~/.nquakesv/demos
+    cp -r $installdir/ktx/demos ~/.nquakesv/server/demos
     rm -rf $installdir/ktx/demos
-    ln -s ~/.nquakesv/demos $installdir/ktx/demos
+    ln -s ~/.nquakesv/server/demos $installdir/ktx/demos
   }
 
   [ ! -f ~/.nquakesv/server/qtv.cfg ] && {
