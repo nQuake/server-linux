@@ -339,10 +339,9 @@ nqwget -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/ma
 }
 [ -z "${mirror}" ] && {
   nqnecho "Using mirror: "
-  range=$(expr$(grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
+  range=$(expr $(grep "[0-9]\{1,2\}=\".*" nquake.ini | wc -l) + 1)
   while [ -z "${mirror}" ]; do
-    number=${RANDOM}
-    let "number %= $range"
+    number=$((((RANDOM<<15)|RANDOM) % $range + 1))
     mirror=$(grep "^${number}=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
     mirrorname=$(grep "^${number}=\".*" nquake.ini | cut -d "\"" -f2)
   done
