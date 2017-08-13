@@ -94,6 +94,13 @@ start_port() {
     ln -s ~/.nquakesv/server/demos $installdir/ktx/demos
   }
 
+  [ ! -L $installdir/logs ] && {
+    echo "* Creating logs folder"
+    [ ! -d ~/.nquakesv/server/logs ] && cp -r $installdir/logs ~/.nquakesv/server/logs
+    rm -rf $installdir/logs
+    ln -s ~/.nquakesv/server/logs $installdir/logs
+  }
+
   [ ! -L $installdir/qtv/qtv_template.cfg ] && {
     echo "* Copying qtv.cfg to nquakesv configuration folder"
     [ ! -f ~/.nquakesv/server/qtv.cfg ] && cp $installdir/qtv/qtv_template.cfg ~/.nquakesv/server/qtv.cfg
