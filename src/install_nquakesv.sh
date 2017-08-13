@@ -18,6 +18,7 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive] [-h|--hostname=<ho
     -q, --quiet             do not output informative messages during setup. this
                             will not silence messages that require interaction.
     -qq, --extra-quiet      do not output errors during setup.
+    -d, --docker            use dependencies used by docker image.
     --hostname              hostname of the server.
     --number-of-ports       number of ports to run.
     --qtv                   install qtv.
@@ -38,6 +39,7 @@ nondefaultrcon=
 noninteractive=""
 quiet=""
 extraquiet=""
+docker=""
 nqinstalldir=""
 nqhostname=""
 nqnumports=""
@@ -67,6 +69,10 @@ for i in "$@"; do
       ;;
     -qq|--extra-quiet)
       extraquiet=1
+      shift
+      ;;
+    -d|--docker)
+      docker=1
       shift
       ;;
     --hostname=*)
@@ -162,8 +168,8 @@ nqiecho() {
 }
 
 nqwget() {
-  [ ! -z "${quiet}" ] && {
-    wget $* >/dev/null 2>&1
+  [ -n "${quiet}" ] && {
+    wget -q $* >/dev/null 2>&1
   } || {
     wget $*
   }
@@ -180,7 +186,7 @@ githubdl() {
 which unzip >/dev/null || error "The package 'unzip' is not installed. Please install it and run the nQuakesv installation again."
 which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the nQuakesv installation again."
 which wget >/dev/null || error "The package 'wget' is not installed. Please install it and run the nQuakesv installation again."
-which screen >/dev/null || error "The package 'screen' is not installed. Please install it and run the nQuakesv installation again."
+[ -z "${docker}" ] && (which screen >/dev/null || error "The package 'screen' is not installed. Please install it and run the nQuakesv installation again.")
 
 nqecho
 nqecho "Welcome to the nQuakesv v${nqversion} installation"
