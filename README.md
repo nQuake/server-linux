@@ -3,7 +3,7 @@
 Run the following in a Linux shell:
 
 ```
-bash <(curl -s https://raw.githubusercontent.com/nQuake/server-linux/master/src/install_nquakesv.sh)
+sh <(curl -s https://raw.githubusercontent.com/nQuake/server-linux/master/src/install_nquakesv.sh)
 ```
 
 You might need to install some prerequisites before running the install script:
