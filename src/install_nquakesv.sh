@@ -245,7 +245,7 @@ nqiecho
   # Search for Pak1
   printf "Do you want setup to search for pak1.pak? (y/n) [${defaultsearchoption}]: "
   read search
-  [ "${search}" == "y" ] || (["${defaultsearchoption}" == "y" ] && [ -z "${search}" ]) && {
+  [ "${search}" = "y" ] || (["${defaultsearchoption}" = "y" ] && [ -z "${search}" ]) && {
     printf "Enter path to recursively search for pak1.pak [${defaultsearchdir}]: "
     read path
   }
@@ -454,12 +454,12 @@ echo "SV_ADMININFO=\"${admin} <${email}>\"" >> ~/.nquakesv/config
 echo "SV_RCON=\"${rcon}\"" >> ~/.nquakesv/config
 echo "SV_QTVPASS=\"${qtvpass}\"" >> ~/.nquakesv/config
 # qtv
-[ "{$qtv}" = "y" ] && {
+[ "${qtv}" = "y" ] && {
   echo 28000 > ~/.nquakesv/qtv
   ln -s ${directory}/ktx/demos ${directory}/qtv/demos
 } || rm -f ~/.nquakesv/qtv
 # qwfwd
-[ "$qwfwd" = "y" ] && {
+[ "${qwfwd}" = "y" ] && {
   echo 30000 > ~/.nquakesv/qwfwd
 } || rm -f ~/.nquakesv/qwfwd
 nqecho "done"
