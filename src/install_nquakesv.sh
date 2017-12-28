@@ -139,6 +139,7 @@ defaultrcon=${nqrcon:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
 defaultqtvpass=${nqqtvpassword:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
 defaultsearchoption=${nqsearchpak:-n}
 defaultsearchdir=${searchdir:-\~/}
+defaultaddcron=${addcron:-y}
 
 error() {
   printf "ERROR: %s\n" "$*"
