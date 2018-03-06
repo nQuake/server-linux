@@ -8,7 +8,7 @@ generate_server_config() {
   inputfile=$1
   outputfile=${SCRIPTFOLDER}/ktx/pwd.cfg
   echo "rcon_password \"${SV_RCON}\"" > ${inputfile}
-  echo "qtv_password \"${SV_QTVPASS}\"" >> ${inputfile}
+  echo "qtv_password \"\"" >> ${inputfile}
   [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -fn ${inputfile} ${outputfile}
 }
 
