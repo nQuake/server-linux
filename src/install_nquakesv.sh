@@ -139,6 +139,7 @@ defaultrcon=${nqrcon:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
 defaultqtvpass=${nqqtvpassword:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
 defaultsearchoption=${nqsearchpak:-n}
 defaultsearchdir=${searchdir:-\~/}
+defaultaddcron=${addcron:-y}
 
 error() {
   printf "ERROR: %s\n" "$*"
@@ -476,9 +477,15 @@ done
 nqecho "done"
 
 [ -d "/etc/cron.d" ] && {
-  nqecho
-  nqnecho "Add nQuake server to crontab (ensures servers are always on) [y/N]: "
-  read addcron
+  [ -z "${noninteractive}" ] && {
+    nqecho
+    nqnecho "Add nQuake server to crontab (ensures servers are always on) (y/n) [${defaultaddcron}]: "
+    read addcron
+  }
+
+  # Set default if nothing was entered
+  [ -z "${addcron}" ] && addcron=${defaultaddcron}
+
   [ "${addcron}" = "y" ] && {
     echo "*/10 * * * * \$(cat ~/.nquakesv/install_dir)/start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
   }
