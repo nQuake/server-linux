@@ -2,7 +2,7 @@
 
 stop_port() {
   port=$1
-  pid=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | awk '{print $1}')
+  pid=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | grep "SCREEN" | awk '{print $1}')
   kill -9 ${pid} >/dev/null
 }
 
@@ -23,7 +23,7 @@ done
   printf "* Stopping qtv (port ${qtvport})..."
   count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
   [ ${count} -gt 0 ] && {
-    pid=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | awk '{print $1}')
+    pid=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | grep "SCREEN" | awk '{print $1}')
     kill -9 ${pid} >/dev/null
     echo "[OK]"
   } || echo "[NOT RUNNING]"
@@ -34,7 +34,7 @@ done
   printf "* Stopping qwfwd (port ${qwfwdport})..."
   count=$(ps ax | grep -v grep | grep "qwfwd.bin" | wc -l)
   [ ${count} -gt 0 ] && {
-    pid=$(ps ax | grep -v grep | grep "qwfwd.bin" | awk '{print $1}')
+    pid=$(ps ax | grep -v grep | grep "qwfwd.bin" | grep "SCREEN" | awk '{print $1}')
     kill -9 ${pid} >/dev/null
     echo "[OK]"
   } || echo "[NOT RUNNING]"
