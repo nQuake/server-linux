@@ -24,7 +24,7 @@ echo
 # Download nquake.ini
 mkdir tmp
 cd tmp
-wget --inet4-only -q -O nquake.ini http://nquake.sourceforge.net/nquake.ini
+wget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
 if [ -s "nquake.ini" ]
 then
         echo foo >> /dev/null
