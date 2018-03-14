@@ -7,66 +7,87 @@ SCRIPTFOLDER=$(dirname `readlink -f "$0"`)
 generate_server_config() {
   inputfile=$1
   outputfile=${SCRIPTFOLDER}/ktx/pwd.cfg
-  echo "rcon_password \"${SV_RCON}\"" > ${inputfile}
-  echo "qtv_password \"\"" >> ${inputfile}
-  [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -fn ${inputfile} ${outputfile}
+  
+  [ ! -f ${outputfile} ] && {
+    echo "rcon_password \"${SV_RCON}\"" > ${inputfile}
+    echo "qtv_password \"\"" >> ${inputfile}
+    [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -fn ${inputfile} ${outputfile}
+  }
 }
 
 generate_qtv_config() {
   port=$1
   inputfile=$2
   outputfile=$3
-  [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -r ${inputfile} ${outputfile}
-  echo "hostname \"${SV_HOSTNAME} Qtv\"" >> ${outputfile}
-  echo "admin_password \"${SV_QTVPASS}\"" >> ${outputfile}
-  echo "mvdport ${port}" >> ${outputfile}
 
-  ip=$(cat ~/.nquakesv/ip)
-  for f in ~/.nquakesv/ports/*; do
-    port=$(basename ${f})
-    echo "qtv ${ip}:${port}" >> ${outputfile}
-  done
+  [ ! -f ${outputfile} ] && {
+    [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -r ${inputfile} ${outputfile}
+    echo "hostname \"${SV_HOSTNAME} Qtv\"" >> ${outputfile}
+    echo "admin_password \"${SV_QTVPASS}\"" >> ${outputfile}
+    echo "mvdport ${port}" >> ${outputfile}
+
+    ip=$(cat ~/.nquakesv/ip)
+    for f in ~/.nquakesv/ports/*; do
+      port=$(basename ${f})
+      echo "qtv ${ip}:${port}" >> ${outputfile}
+    done
+  }
 }
 
 generate_qtv_script() {
   outputfile=${SCRIPTFOLDER}/run/qtv.sh
-  echo "screen -dmS qtv \$(cat ~/.nquakesv/install_dir)/qtv/qtv.bin +exec qtv.cfg" > ${outputfile}
-  chmod +x ${outputfile}
+
+  [ ! -f ${outputfile} ] && {
+    echo "screen -dmS qtv \$(cat ~/.nquakesv/install_dir)/qtv/qtv.bin +exec qtv.cfg" > ${outputfile}
+    chmod +x ${outputfile}
+  }
 }
 
 generate_qwfwd_config() {
   port=$1
   inputfile=${SCRIPTFOLDER}/qwfwd/qwfwd_template.cfg
   outputfile=$2
-  [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -r ${inputfile} ${outputfile}
-  echo "set hostname \"${SV_HOSTNAME} QWfwd\"" >> ${outputfile}
-  echo "set net_port ${port}" >> ${outputfile}
+
+  [ ! -f ${outputfile} ] && {
+    [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -r ${inputfile} ${outputfile}
+    echo "set hostname \"${SV_HOSTNAME} QWfwd\"" >> ${outputfile}
+    echo "set net_port ${port}" >> ${outputfile}
+  }
 }
 
 generate_qwfwd_script() {
   outputfile=${SCRIPTFOLDER}/run/qwfwd.sh
-  echo "screen -dmS qwfwd \$(cat ~/.nquakesv/install_dir)/qwfwd/qwfwd.bin" > ${outputfile}
-  chmod +x ${outputfile}
+
+  [ ! -f ${outputfile} ] && {
+    echo "screen -dmS qwfwd \$(cat ~/.nquakesv/install_dir)/qwfwd/qwfwd.bin" > ${outputfile}
+    chmod +x ${outputfile}
+  }
 }
 
 generate_port_config() {
   port=$1
   num=$2
   outputfile=$3
-  cat ${SCRIPTFOLDER}/ktx/port_template.cfg > ${outputfile}
-  echo "set k_motd1 \"${SV_HOSTNAME} #${num}\"" >> ${outputfile}
-  echo "hostname \"${SV_HOSTNAME}\"" >> ${outputfile}
-  echo "sv_admininfo \"${SV_ADMININFO}\"" >> ${outputfile}
-  echo "sv_serverip \"$(cat ~/.nquakesv/ip):${port}\"" >> ${outputfile}
-  echo "qtv_streamport \"${port}\"" >> ${outputfile}
+
+  [ ! -f ${outputfile} ] && {
+    cat ${SCRIPTFOLDER}/ktx/port_template.cfg > ${outputfile}
+    echo "set k_motd1 \"${SV_HOSTNAME} #${num}\"" >> ${outputfile}
+    echo "hostname \"${SV_HOSTNAME}\"" >> ${outputfile}
+    echo "sv_admininfo \"${SV_ADMININFO}\"" >> ${outputfile}
+    echo "sv_serverip \"$(cat ~/.nquakesv/ip):${port}\"" >> ${outputfile}
+    echo "qtv_streamport \"${port}\"" >> ${outputfile}
+  }
 }
 
 generate_port_script() {
   port=$1
   num=$2
   outputfile=$3
-  echo "screen -dmS qw_$port \$(cat ~/.nquakesv/install_dir)/mvdsv -port ${port} -game ktx +exec port${num}.cfg" > ${outputfile}
-  chmod +x ${outputfile}
+
+  [ ! -f ${outputfile} ] && {
+    echo "screen -dmS qw_$port \$(cat ~/.nquakesv/install_dir)/mvdsv -port ${port} -game ktx +exec port${num}.cfg" > ${outputfile}
+    chmod +x ${outputfile}
+  }
 }
 
 start_port() {
