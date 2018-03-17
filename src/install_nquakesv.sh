@@ -458,6 +458,7 @@ echo "SV_QTVPASS=\"${qtvpass}\"" >> ~/.nquakesv/config
 [ "${qtv}" = "y" ] && {
   echo 28000 > ~/.nquakesv/qtv
   ln -s ${directory}/ktx/demos ${directory}/qtv/demos
+  ln -s ${directory}/qw/maps ${directory}/qtv/maps
 }
 # qwfwd
 [ "${qwfwd}" = "y" ] && {
