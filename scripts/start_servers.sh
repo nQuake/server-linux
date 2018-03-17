@@ -38,7 +38,7 @@ generate_qtv_script() {
   outputfile=${SCRIPTFOLDER}/run/qtv.sh
 
   [ ! -f ${outputfile} ] && {
-    echo "screen -dmS qtv \$(cat ~/.nquakesv/install_dir)/qtv/qtv.bin +exec qtv.cfg" > ${outputfile}
+    echo "cd $(cat ~/.nquakesv/install_dir)/qtv/ && exec screen -dmS qtv ./qtv.bin +exec qtv.cfg" > ${outputfile}
     chmod +x ${outputfile}
   }
 }
@@ -59,7 +59,7 @@ generate_qwfwd_script() {
   outputfile=${SCRIPTFOLDER}/run/qwfwd.sh
 
   [ ! -f ${outputfile} ] && {
-    echo "screen -dmS qwfwd \$(cat ~/.nquakesv/install_dir)/qwfwd/qwfwd.bin" > ${outputfile}
+    echo "cd $(cat ~/.nquakesv/install_dir)/qwfwd/ && exec screen -dmS qwfwd ./qwfwd.bin" > ${outputfile}
     chmod +x ${outputfile}
   }
 }
