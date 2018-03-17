@@ -338,7 +338,7 @@ nqwget -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/ma
 # List all the available mirrors
 [ -z "${noninteractive}" ] && {
   nqecho "From what mirror would you like to download nQuakesv?"
-  grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | sed -r 's/([0-9]{1,2})="(.+?)"/  \1  \2/g'
+  grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl
   nqnecho "Enter mirror number [random]: "
   read mirror
   mirror=$(grep "^${mirror}=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
