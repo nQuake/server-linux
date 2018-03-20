@@ -488,7 +488,7 @@ nqecho "done"
   [ -z "${addcron}" ] && addcron=${defaultaddcron}
 
   [ "${addcron}" = "y" ] && {
-    echo "*/10 * * * * \$(cat ~/.nquakesv/install_dir)/start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
+    echo "*/10 * * * * $USER cd \$(cat ~/.nquakesv/install_dir) && ./start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
   }
 }
 
