@@ -85,7 +85,7 @@ generate_port_script() {
   outputfile=$3
 
   [ ! -f ${outputfile} ] && {
-    echo "cd \$(cat ~/.nquakesv/install_dir)/ && screen -dmS qw_$port ./mvdsv -port ${port} -game ktx +exec port${num}.cfg" > ${outputfile}
+    echo "cd \$(cat ~/.nquakesv/install_dir)/ && screen -dmS qw_$port ./mvdsv -port ${port} -game ktx +exec port_${port}.cfg" > ${outputfile}
     chmod +x ${outputfile}
   }
 }
@@ -93,9 +93,9 @@ generate_port_script() {
 start_port() {
   port=$1
   num=$2
-  generate_port_config ${port} ${num} ${installdir}/ktx/port${num}.cfg
-  generate_port_script ${port} ${num} ${installdir}/run/port${num}.sh
-  ${installdir}/run/port${num}.sh > /dev/null &
+  generate_port_config ${port} ${num} ${installdir}/ktx/port_${port}.cfg
+  generate_port_script ${port} ${num} ${installdir}/run/port_${port}.sh
+  ${installdir}/run/port_${port}.sh > /dev/null &
 }
 
 # Run only one server if docker file exists
