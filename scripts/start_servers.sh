@@ -1,12 +1,12 @@
 #!/bin/sh
 
 installdir=$(cat ~/.nquakesv/install_dir)
-SCRIPTFOLDER=$(dirname `readlink -f "$0"`)
+
 . ~/.nquakesv/config
 
 generate_server_config() {
   inputfile=$1
-  outputfile=${SCRIPTFOLDER}/ktx/pwd.cfg
+  outputfile=${installdir}/ktx/pwd.cfg
   
   [ ! -f ${outputfile} ] && {
     echo "rcon_password \"${SV_RCON}\"" > ${inputfile}
@@ -35,7 +35,7 @@ generate_qtv_config() {
 }
 
 generate_qtv_script() {
-  outputfile=${SCRIPTFOLDER}/run/qtv.sh
+  outputfile=${installdir}/run/qtv.sh
 
   [ ! -f ${outputfile} ] && {
     echo "cd \$(cat ~/.nquakesv/install_dir)/qtv/ && screen -dmS qtv ./qtv.bin +exec qtv.cfg" > ${outputfile}
@@ -45,7 +45,7 @@ generate_qtv_script() {
 
 generate_qwfwd_config() {
   port=$1
-  inputfile=${SCRIPTFOLDER}/qwfwd/qwfwd_template.cfg
+  inputfile=${installdir}/qwfwd/qwfwd_template.cfg
   outputfile=$2
 
   [ ! -f ${outputfile} ] && {
@@ -56,7 +56,7 @@ generate_qwfwd_config() {
 }
 
 generate_qwfwd_script() {
-  outputfile=${SCRIPTFOLDER}/run/qwfwd.sh
+  outputfile=${installdir}/run/qwfwd.sh
 
   [ ! -f ${outputfile} ] && {
     echo "cd \$(cat ~/.nquakesv/install_dir)/qwfwd/ && screen -dmS qwfwd ./qwfwd.bin" > ${outputfile}
@@ -70,7 +70,7 @@ generate_port_config() {
   outputfile=$3
 
   [ ! -f ${outputfile} ] && {
-    cat ${SCRIPTFOLDER}/ktx/port_template.cfg > ${outputfile}
+    cat ${installdir}/ktx/port_template.cfg > ${outputfile}
     echo "set k_motd1 \"${SV_HOSTNAME} #${num}\"" >> ${outputfile}
     echo "hostname \"${SV_HOSTNAME}\"" >> ${outputfile}
     echo "sv_admininfo \"${SV_ADMININFO}\"" >> ${outputfile}
@@ -85,7 +85,7 @@ generate_port_script() {
   outputfile=$3
 
   [ ! -f ${outputfile} ] && {
-    echo "screen -dmS qw_$port \$(cat ~/.nquakesv/install_dir)/mvdsv -port ${port} -game ktx +exec port${num}.cfg" > ${outputfile}
+    echo "cd \$(cat ~/.nquakesv/install_dir)/ && screen -dmS qw_$port ./mvdsv -port ${port} -game ktx +exec port${num}.cfg" > ${outputfile}
     chmod +x ${outputfile}
   }
 }
@@ -93,9 +93,9 @@ generate_port_script() {
 start_port() {
   port=$1
   num=$2
-  generate_port_config ${port} ${num} ${SCRIPTFOLDER}/ktx/port${num}.cfg
-  generate_port_script ${port} ${num} ${SCRIPTFOLDER}/run/port${num}.sh
-  ${SCRIPTFOLDER}/run/port${num}.sh > /dev/null &
+  generate_port_config ${port} ${num} ${installdir}/ktx/port${num}.cfg
+  generate_port_script ${port} ${num} ${installdir}/run/port${num}.sh
+  ${installdir}/run/port${num}.sh > /dev/null &
 }
 
 # Run only one server if docker file exists
@@ -188,28 +188,28 @@ start_port() {
   [ "${runserver}" = "mvdsv" ] && {
     echo "* Starting MVDSV"
     generate_server_config ~/.nquakesv/server/passwords.cfg
-    generate_port_config $dockerport 1 ${SCRIPTFOLDER}/ktx/port1.cfg
+    generate_port_config $dockerport 1 ${installdir}/ktx/port1.cfg
     cd $(cat ~/.nquakesv/install_dir)
     ./mvdsv -port $dockerport -game ktx +exec port1.cfg
   }
 
   [ "${runserver}" = "qtv" ] && {
     echo "* Starting QTV"
-    generate_qtv_config $dockerport ~/.nquakesv/server/qtv.cfg ${SCRIPTFOLDER}/qtv/qtv.cfg
+    generate_qtv_config $dockerport ~/.nquakesv/server/qtv.cfg ${installdir}/qtv/qtv.cfg
     cd $(cat ~/.nquakesv/install_dir)
     ./qtv/qtv.bin +exec qtv.cfg
   }
 
   [ "${runserver}" = "qwfwd" ] && {
     echo "* Starting QWFWD"
-    generate_qwfwd_config $dockerport ~/.nquakesv/server/qwfwd.cfg ${SCRIPTFOLDER}/qwfwd/qwfwd.cfg
+    generate_qwfwd_config $dockerport ~/.nquakesv/server/qwfwd.cfg ${installdir}/qwfwd/qwfwd.cfg
     cd $(cat ~/.nquakesv/install_dir)
     ./qwfwd/qwfwd.bin
   }
 }
 
 [ ! -f ~/.nquakesv/docker ] && {
-  generate_server_config ${SCRIPTFOLDER}/ktx/pwd.cfg
+  generate_server_config ${installdir}/ktx/pwd.cfg
 
   num=0
   for f in ~/.nquakesv/ports/*; do
@@ -225,7 +225,7 @@ start_port() {
 
   [ -f ~/.nquakesv/qtv ] && {
     qtvport=$(cat ~/.nquakesv/qtv)
-    generate_qtv_config ${qtvport} ${SCRIPTFOLDER}/qtv/qtv_template.cfg ${SCRIPTFOLDER}/qtv/qtv.cfg
+    generate_qtv_config ${qtvport} ${installdir}/qtv/qtv_template.cfg ${installdir}/qtv/qtv.cfg
     printf "* Starting qtv (port ${qtvport})..."
     count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
     [ ${count} -eq 0 ] && {
@@ -237,7 +237,7 @@ start_port() {
 
   [ -f ~/.nquakesv/qwfwd ] && {
     qwfwdport=$(cat ~/.nquakesv/qwfwd)
-    generate_qwfwd_config ${qwfwdport} ${SCRIPTFOLDER}/qwfwd/qwfwd_template.cfg ${SCRIPTFOLDER}/qwfwd/qwfwd.cfg
+    generate_qwfwd_config ${qwfwdport} ${installdir}/qwfwd/qwfwd_template.cfg ${installdir}/qwfwd/qwfwd.cfg
     printf "* Starting qwfwd (port ${qwfwdport})..."
     count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
     [ ${count} -eq 0 ] && {
