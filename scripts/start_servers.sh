@@ -72,7 +72,7 @@ generate_port_config() {
   [ ! -f ${outputfile} ] && {
     cat ${installdir}/ktx/port_template.cfg > ${outputfile}
     echo "set k_motd1 \"${SV_HOSTNAME} #${num}\"" >> ${outputfile}
-    echo "hostname \"${SV_HOSTNAME}\"" >> ${outputfile}
+    echo "hostname \"${SV_HOSTNAME}:${port}\"" >> ${outputfile}
     echo "sv_admininfo \"${SV_ADMININFO}\"" >> ${outputfile}
     echo "sv_serverip \"$(cat ~/.nquakesv/ip):${port}\"" >> ${outputfile}
     echo "qtv_streamport \"${port}\"" >> ${outputfile}
