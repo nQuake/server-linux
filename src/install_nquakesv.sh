@@ -187,7 +187,7 @@ githubdl() {
 which unzip >/dev/null || error "The package 'unzip' is not installed. Please install it and run the nQuakesv installation again."
 which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the nQuakesv installation again."
 which wget >/dev/null || error "The package 'wget' is not installed. Please install it and run the nQuakesv installation again."
-[ -z "${docker}" ] && (which screen >/dev/null || error "The package 'screen' is not installed. Please install it and run the nQuakesv installation again.")
+[ -z "${docker}" ] && { which screen >/dev/null || error "The package 'screen' is not installed. Please install it and run the nQuakesv installation again."; }
 
 nqecho
 nqecho "Welcome to the nQuakesv v${nqversion} installation"
