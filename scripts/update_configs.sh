@@ -30,8 +30,8 @@ then
         echo foo >> /dev/null
 else
         echo "Error: Could not download nquake.ini. Better luck next time. Exiting."
-	cd ..
-	rm -rf tmp
+        cd ..
+        rm -rf tmp
         exit
 fi
 
@@ -72,13 +72,13 @@ then
         else
                 echo "Error: The configs failed to download. Better luck next time. Exiting."
                 cd ..
-		rm -rf tmp
+                rm -rf tmp
                 exit
         fi
 else
         echo "Error: The configs failed to download. Better luck next time. Exiting."
-	cd ..
-	rm -rf tmp
+        cd ..
+        rm -rf tmp
         exit
 fi
 
@@ -132,9 +132,11 @@ fi
 if [ "$sure" != "n" ]
 then
         echo -n "* Moving configs into place..."
-        rm -rf ../ktx/configs ../ktx/modes
+        rm -rf ../ktx/bots ../ktx/configs ../ktx/modes ../ktx/race
+        mv ktx/bots ../ktx/bots
         mv ktx/configs ../ktx/configs
         mv ktx/modes ../ktx/modes
+        mv ktx/race ../ktx/race
         mv ktx/* ../ktx/
         echo "done"
 fi
