@@ -45,8 +45,8 @@ generate_qtv_script() {
 
 generate_qwfwd_config() {
   port=$1
-  inputfile=${installdir}/qwfwd/qwfwd_template.cfg
-  outputfile=$2
+  inputfile=$2
+  outputfile=$3
 
   [ ! -f ${outputfile} ] && {
     [ "$(readlink -f $inputfile)" != "$(readlink -f $outputfile)" ] && cp -r ${inputfile} ${outputfile}
