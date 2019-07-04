@@ -7,7 +7,7 @@ installdir=$(cat ~/.nquakesv/install_dir)
 generate_server_config() {
   inputfile=$1
   outputfile=${installdir}/ktx/pwd.cfg
-  
+
   [ ! -f ${outputfile} ] && {
     echo "rcon_password \"${SV_RCON}\"" > ${inputfile}
     echo "qtv_password \"\"" >> ${inputfile}
@@ -27,6 +27,8 @@ generate_qtv_config() {
     echo "mvdport ${port}" >> ${outputfile}
 
     ip=$(cat ~/.nquakesv/ip)
+    echo "address ${ip}:${port}" >> ${outputfile}
+
     for f in ~/.nquakesv/ports/*; do
       port=$(basename ${f})
       echo "qtv ${ip}:${port}" >> ${outputfile}
