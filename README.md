@@ -1,4 +1,4 @@
-# nQuake Server Linux
+# nQuake Server for Linux
 
 ## DEPRECATION
 
