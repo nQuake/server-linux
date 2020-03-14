@@ -1,3 +1,12 @@
+## DEPRECATION
+
+This project has been deprecated and replaced by the following projects:
+
+* [nQuakesv](https://github.com/nQuake/nquakesv) - docker-compose
+* [nQuakesv Docker](https://github.com/niclaslindstedt/nquakesv-docker) - image
+* [QWFWD Docker](https://github.com/niclaslindstedt/qwfwd-docker) - image
+* [QTV Docker](https://github.com/niclaslindstedt/qtv-docker) - image
+
 ## Install
 
 Run the following in a Linux shell:
