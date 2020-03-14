@@ -9,7 +9,7 @@ sh <(curl -s https://raw.githubusercontent.com/nQuake/server-linux/master/src/in
 You might need to install some prerequisites before running the install script:
 
 ```
-apt-get install curl wget unzip realpath
+apt-get install curl realpath screen unzip wget
 ```
 
 ## Running nQuakesv
