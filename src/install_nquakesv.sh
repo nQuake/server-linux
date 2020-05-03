@@ -6,11 +6,16 @@ nqversion="1.8"
 # Usage info
 show_help() {
 cat << EOF
-usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive] [-h|--hostname=<hostname>]
+usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
+                           [-q|--quiet] [-qq|--extra-quiet]
+                           [-d|--docker]
+                           [-h|--hostname=<hostname>]
                            [-p|--number-of-ports=<count>] [-t|--qtv] [-f|--qwfwd]
+                           [-l|--listen-address=<address>]
                            [-a|--admin=<name>] [-e|--admin-email=<email>]
                            [-r|--rcon-password=<password>] [-y|--qtv-password=<password>]
-                           [-s|--search-pak[=<path>]] [-q|--quiet] [-qq|--extra-quiet] [TARGETDIR]
+                           [-s[=<path>]|--search-pak[=<path>]]
+                           [-c|--no-cron] [TARGETDIR]
 
     -h, --help              display this help and exit.
     -n, --non-interactive   non-interactive mode (use defaults or command line
@@ -19,16 +24,18 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive] [-h|--hostname=<ho
                             will not silence messages that require interaction.
     -qq, --extra-quiet      do not output errors during setup.
     -d, --docker            use dependencies used by docker image.
-    --hostname              hostname of the server.
-    --number-of-ports       number of ports to run.
-    --qtv                   install qtv.
-    --qwfwd                 install qwfwd proxy.
-    --admin                 administrator name
-    --admin-email           administrator e-mail.
-    --rcon-password         rcon password.
-    --qtv-password          qtv password.
-    --search-pak            search for pak1.pak during setup, specify a directory
+    -o, --hostname          hostname of the server.
+    -p, --number-of-ports   number of ports to run.
+    -t, --qtv               install qtv.
+    -f, --qwfwd             install qwfwd proxy.
+    -l, --listen-address    fully qualified domain name (fqdn) or IP address.
+    -a, --admin             administrator name.
+    -e, --admin-email       administrator e-mail.
+    -r, --rcon-password     rcon password.
+    -y, --qtv-password      qtv password.
+    -s, --search-pak        search for pak1.pak during setup, specify a directory
                             to start searching there instead of in home folder.
+    -c, --no-cron           don't add cron job.
 EOF
 }
 
@@ -40,18 +47,19 @@ noninteractive=""
 quiet=""
 extraquiet=""
 docker=""
-nqinstalldir=""
 nqhostname=""
 nqnumports=""
 nqinstallqtv=""
 nqinstallqwfwd=""
-nqipaddr=""
+nqaddr=""
 nqadmin=""
 nqemail=""
 nqrcon=""
 nqqtvpassword=""
 nqsearchpak=""
 searchdir=""
+nqaddcron=""
+nqinstalldir=""
 
 for i in "$@"; do
   case ${i} in
@@ -75,50 +83,54 @@ for i in "$@"; do
       docker=1
       shift
       ;;
-    --hostname=*)
+    -o=*|--hostname=*)
       nqhostname="${i#*=}"
       shift
       ;;
-    --number-of-ports=*)
+    -p=*|--number-of-ports=*)
       nqnumports="${i#*=}"
       shift
       ;;
-    --qtv)
+    -t|--qtv)
       nqinstallqtv="y"
       shift
       ;;
-    --qwfwd)
+    -f|--qwfwd)
       nqinstallqwfwd="y"
       shift
       ;;
-    --listen-address=*)
-      nqipaddr="${i#*=}"
+    -l=*|--listen-address=*)
+      nqaddr="${i#*=}"
       shift
       ;;
-    --admin=*)
+    -a=*|--admin=*)
       nqadmin="${i#*=}"
       shift
       ;;
-    --admin-email=*)
+    -e=*|--admin-email=*)
       nqemail="${i#*=}"
       shift
       ;;
-    --rcon-password=*)
+    -r=*|--rcon-password=*)
       nqrcon="${i#*=}"
       nondefaultrcon=1
       shift
       ;;
-    --qtv-password=*)
+    -y=*|--qtv-password=*)
       nqqtvpassword="${i#*=}"
       shift
       ;;
-    --search-pak=*)
+    -s=*|--search-pak=*)
       nqsearchpak="y"
       searchdir="${i#*=}"
       shift
       ;;
-    --search-pak)
+    -s|--search-pak)
       nqsearchpak="y"
+      shift
+      ;;
+    -c|--no-cron)
+      nqaddcron="n"
       shift
       ;;
     *)
@@ -139,7 +151,7 @@ defaultrcon=${nqrcon:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
 defaultqtvpass=${nqqtvpassword:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
 defaultsearchoption=${nqsearchpak:-n}
 defaultsearchdir=${searchdir:-\~/}
-defaultaddcron=${addcron:-y}
+defaultaddcron=${nqaddcron:-y}
 
 error() {
   printf "ERROR: %s\n" "$*"
@@ -207,11 +219,11 @@ nqiecho
   printf "Enter a descriptive hostname [${defaulthostname}]: "
   read hostname
 
-  # IP/dns
-  [ -z "${nqipaddr}" ] && {
-          printf "Enter your server's DNS. [use external IP]: "
+  # FQDN/IP
+  [ -z "${nqaddr}" ] && {
+          printf "Enter your server's fully qualified domain name (or IP address). [use external IP]: "
   } || {
-          printf "Enter your server's DNS. [${nqipaddr}]: "
+          printf "Enter your server's fully qualified domain name (or IP address). [${nqaddr}]: "
   }
   read hostdns
 
@@ -246,7 +258,7 @@ nqiecho
   # Search for Pak1
   printf "Do you want setup to search for pak1.pak? (y/n) [${defaultsearchoption}]: "
   read search
-  [ "${search}" = "y" ] || (["${defaultsearchoption}" = "y" ] && [ -z "${search}" ]) && {
+  [ "${search}" = "y" ] || ([ "${defaultsearchoption}" = "y" ] && [ -z "${search}" ]) && {
     printf "Enter path to recursively search for pak1.pak [${defaultsearchdir}]: "
     read path
   }
@@ -259,7 +271,7 @@ nqecho "========================================="
 # Set defaults if nothing was entered (non-interactive mode or just use defaults)
 [ -z "${directory}" ] && eval directory=${defaultdir}
 [ -z "${hostname}" ] && hostname=${defaulthostname}
-[ -z "${hostdns}" ] && hostdns=${nqipaddr}
+[ -z "${hostdns}" ] && hostdns=${nqaddr}
 [ -z "${ports}" ] && ports=${defaultports}
 [ -z "${rcon}" ] && rcon=${defaultrcon}
 [ -z "${qtv}" ] && qtv=${defaultqtv}
