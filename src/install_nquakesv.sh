@@ -391,9 +391,10 @@ nqwget -O sv-configs.zip ${mirror}/sv-configs.zip || error "Failed to download $
 [ ! -s "sv-non-gpl.zip" ] && error "Downloaded sv-non-gpl.zip but file is empty?!"
 [ ! -s "sv-configs.zip" ] && error "Downloaded sv-configs.zip but file is empty?!"
 
-# Get remote IP address
+# Get external IP address
 nqnecho "Resolving external IP address... "
-remote_ip=$(curl -s http://myip.dnsomatic.com)
+remote_ip=$(curl -f -s https://api.ipify.org/?format=txt)
+[ -z "${remote_ip}" ] && error "Failed retrieving external IP address"
 [ -z "${hostdns}" ] && hostdns=${remote_ip}
 nqecho "Resolved: ${remote_ip}"
 nqecho
