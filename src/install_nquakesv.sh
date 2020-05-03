@@ -358,7 +358,7 @@ mkdir -p id1
 nqecho
 
 # Find out what architecture to use
-binary=$(uname -i)
+binary=$(uname -m)
 
 # Download all the packages
 nqecho "=== Downloading ==="
