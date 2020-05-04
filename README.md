@@ -1,13 +1,13 @@
 # nQuake Server for Linux
 
-## DEPRECATION
+### Docker
 
-This project has been deprecated and replaced by the following projects:
+If you're interested in running nQuakesv in Docker, you can find the relevant projects here:
 
-* [nQuakesv](https://github.com/nQuake/nquakesv) - docker-compose
-* [nQuakesv Docker](https://github.com/niclaslindstedt/nquakesv-docker) - image
-* [QWFWD Docker](https://github.com/niclaslindstedt/qwfwd-docker) - image
-* [QTV Docker](https://github.com/niclaslindstedt/qtv-docker) - image
+* [nQuakesv](https://github.com/nQuake/nquakesv) - Docker Compose project
+* [nQuakesv Docker](https://github.com/niclaslindstedt/nquakesv-docker) - Docker server image
+* [QTV Docker](https://github.com/niclaslindstedt/qtv-docker) - Docker QTV image
+* [QWFWD Docker](https://github.com/niclaslindstedt/qwfwd-docker) - Docker QWFWD image
 
 ## Install
 
