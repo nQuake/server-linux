@@ -26,7 +26,7 @@ echo "======================================"
 echo
 
 # What binaries to use
-binary=`uname -i`
+binary=`uname -m`
 
 # Download nquake.ini
 mkdir tmp
