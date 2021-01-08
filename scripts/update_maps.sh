@@ -89,6 +89,20 @@ else
         exit
 fi
 
+echo -n "* Extracting maps..."
+unzip -qqo sv-maps.zip 2> /dev/null;echo "done"
+
+echo -n "* Extracting GPL maps..."
+unzip -qqo sv-maps-gpl.zip 2> /dev/null;echo "done"
+
+echo -n "* Downloading core maps..."
+wget -P qw/maps -r --no-parent -N -nd -A "*.bsp" -A "*.ent" https://maps.quakeworld.nu/core/
+
+echo -n "* Setting permissions..."
+chmod 644 qw/maps/* 2> /dev/null
+
+echo "done"
+
 # Ask to restart servers
 if [ "$1" == "--restart" ] || [ "$2" == "--restart" ] || [ "$3" == "--restart" ] || [ "$4" == "--restart" ]; then
         restart="y"
@@ -103,13 +117,6 @@ fi
 
 # Install updates
 echo "=== Installing ==="
-echo -n "* Extracting maps..."
-unzip -qqo sv-maps.zip 2> /dev/null;echo "done"
-echo -n "* Extracting GPL maps..."
-unzip -qqo sv-maps-gpl.zip 2> /dev/null;echo "done"
-echo -n "* Setting permissions..."
-chmod 644 qw/maps/* 2> /dev/null
-echo "done"
 
 # Stop servers
 if [ "$restart" == "y" ]
