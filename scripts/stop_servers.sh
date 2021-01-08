@@ -1,11 +1,5 @@
 #!/bin/sh
 
-stop_port() {
-  port=$1
-  pid=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | grep "SCREEN" | awk '{print $1}')
-  kill -9 ${pid} >/dev/null
-}
-
 [ $(ps ax | grep -v grep | grep "start_servers.sh" | wc -l) -gt 0 ] && killall -9 start_servers.sh
 
 for f in ~/.nquakesv/ports/*; do
@@ -13,7 +7,8 @@ for f in ~/.nquakesv/ports/*; do
   count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
   printf "* Stopping mvdsv (port ${port})..."
   [ ${count} -gt 0 ] && {
-    stop_port ${port}
+    pid=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | grep "SCREEN" | awk '{print $1}')
+    kill -9 ${pid} >/dev/null
     echo "[OK]"
   } || echo "[NOT RUNNING]"
 done
@@ -39,3 +34,5 @@ done
     echo "[OK]"
   } || echo "[NOT RUNNING]"
 }
+
+screen -wipe

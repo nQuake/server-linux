@@ -92,14 +92,6 @@ generate_port_script() {
   }
 }
 
-start_port() {
-  port=$1
-  num=$2
-  generate_port_config ${port} ${num} ${installdir}/ktx/port_${port}.cfg
-  generate_port_script ${port} ${num} ${installdir}/run/port_${port}.sh
-  ${installdir}/run/port_${port}.sh > /dev/null &
-}
-
 generate_server_config ${installdir}/ktx/pwd.cfg
 
 num=0
@@ -109,7 +101,9 @@ for f in ~/.nquakesv/ports/*; do
   count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
   printf "* Starting mvdsv #${num} (port ${port})..."
   [ ${count} -eq 0 ] && {
-    start_port ${port} ${num}
+    generate_port_config ${port} ${num} ${installdir}/ktx/port_${port}.cfg
+    generate_port_script ${port} ${num} ${installdir}/run/port_${port}.sh
+    ${installdir}/run/port_${port}.sh > /dev/null &
     echo "[OK]"
   } || echo "[ALREADY RUNNING]"
 done
