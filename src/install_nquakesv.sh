@@ -362,9 +362,6 @@ nqwget -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/ma
 mkdir -p id1
 nqecho
 
-# Find out what architecture to use
-binary=$(uname -m)
-
 # Download all the packages
 nqecho "=== Downloading ==="
 nqwget -O qsw106.zip ${mirror}/qsw106.zip || error "Failed to download ${mirror}/qsw106.zip"
@@ -373,13 +370,8 @@ nqwget -O sv-gpl.zip ${mirror}/sv-gpl.zip || error "Failed to download ${mirror}
 [ ! -s "sv-gpl.zip" ] && error "Downloaded sv-gpl.zip but file is empty?!"
 nqwget -O sv-non-gpl.zip ${mirror}/sv-non-gpl.zip || error "Failed to download ${mirror}/sv-non-gpl.zip"
 [ ! -s "sv-non-gpl.zip" ] && error "Downloaded sv-non-gpl.zip but file is empty?!"
-[ "$binary" = "x86_64" ] && {
-  nqwget -O sv-bin-x64.zip ${mirror}/sv-bin-x64.zip || error "Failed to download ${mirror}/sv-bin-x64.zip"
-  [ ! -s "sv-bin-x64.zip" ] && error "Downloaded sv-bin-x64.zip but file is empty?!"
-} || {
-  nqwget -O sv-bin-x86.zip ${mirror}/sv-bin-x86.zip || error "Failed to download ${mirror}/sv-bin-x86.zip"
-  [ ! -s "sv-bin-x86.zip" ] && error "Downloaded sv-bin-x86.zip but file is empty?!"
-}
+nqwget -O sv-bin-x64.zip ${mirror}/sv-bin-x64.zip || error "Failed to download ${mirror}/sv-bin-x64.zip"
+[ ! -s "sv-bin-x64.zip" ] && error "Downloaded sv-bin-x64.zip but file is empty?!"
 nqwget -O sv-configs.zip ${mirror}/sv-configs.zip || error "Failed to download ${mirror}/sv-configs.zip"
 [ ! -s "sv-configs.zip" ] && error "Downloaded sv-configs.zip but file is empty?!"
 nqwget -O sv-maps.zip ${mirror}/sv-maps.zip || error "Failed to download ${mirror}/sv-maps.zip"
@@ -402,11 +394,7 @@ nqnecho "* Extracting nQuakesv setup files (1 of 2)..."
 nqnecho "* Extracting nQuakesv setup files (2 of 2)..."
 (unzip -qqo sv-non-gpl.zip 2>/dev/null && nqecho done) || nqecho fail
 nqnecho "* Extracting nQuakesv binaries..."
-[ "$binary" = "x86_64" ] && {
-  (unzip -qqo sv-bin-x64.zip 2>/dev/null && nqecho done) || nqecho fail
-} || {
-  (unzip -qqo sv-bin-x86.zip 2>/dev/null && nqecho done) || nqecho fail
-}
+(unzip -qqo sv-bin-x64.zip 2>/dev/null && nqecho done) || nqecho fail
 nqnecho "* Extracting nQuakesv configuration files..."
 (unzip -qqo sv-configs.zip 2>/dev/null && nqecho done) || nqecho fail
 nqnecho "* Extracting nQuakesv maps..."
@@ -430,7 +418,7 @@ nqnecho "* Renaming files..."
 
 # Remove distribution files
 nqnecho "* Removing distribution files..."
-(rm -rf ${directory}/qsw106.zip ${directory}/sv-gpl.zip ${directory}/sv-non-gpl.zip ${directory}/sv-bin-x86.zip ${directory}/sv-bin-x64.zip ${directory}/sv-configs.zip ${directory}/sv-maps.zip ${directory}/nquake.ini && nqecho done) || nqecho fail
+(rm -rf ${directory}/qsw106.zip ${directory}/sv-gpl.zip ${directory}/sv-non-gpl.zip ${directory}/sv-bin-x64.zip ${directory}/sv-configs.zip ${directory}/sv-maps.zip ${directory}/nquake.ini && nqecho done) || nqecho fail
 
 # Convert DOS files to UNIX
 nqnecho "* Converting DOS files to UNIX..."
