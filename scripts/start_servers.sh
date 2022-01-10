@@ -115,47 +115,53 @@ for f in ~/.nquakesv/ports/*; do
   num=$((${num}+1))
   port=$(basename ${f})
   count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
-  [ ${count} -eq 0 ] && {
+  if [ ${count} -eq 0 ]; then
     generate_port_config ${port} ${num} ${installdir}/ktx/port_${port}.cfg
     generate_port_script ${port} ${num} ${installdir}/run/port_${port}.sh
-  }
-  [ -z "${GENERATE_ONLY}" ] && {
+  fi
+  if [ -z "${GENERATE_ONLY}" ]; then
     printf "* Starting mvdsv #${num} (port ${port})..."
-    [ ${count} -eq 0 ] && {
+    if [ ${count} -eq 0 ]; then
       ${installdir}/run/port_${port}.sh > /dev/null &
       echo "[OK]"
-    } || echo "[ALREADY RUNNING]"
-  }
+    else
+      echo "[ALREADY RUNNING]"
+    fi
+  fi
 done
 
-[ -f ~/.nquakesv/qtv ] && {
+if [ -f ~/.nquakesv/qtv ]; then
   qtvport=$(cat ~/.nquakesv/qtv)
   count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
-  [ ${count} -eq 0 ] && {
+  if [ ${count} -eq 0 ]; then
     generate_qtv_config ${qtvport} ${installdir}/qtv/qtv_template.cfg ${installdir}/qtv/qtv.cfg
     generate_qtv_script
-  }
-  [ -z "${GENERATE_ONLY}" ] && {
+  fi
+  if [ -z "${GENERATE_ONLY}" ]; then
     printf "* Starting qtv (port ${qtvport})..."
-    [ ${count} -eq 0 ] && {
+    if [ ${count} -eq 0 ]; then
       $(cat ~/.nquakesv/install_dir)/run/qtv.sh > /dev/null &
       echo "[OK]"
-    } || echo "[ALREADY RUNNING]"
-  }
-}
+    else
+      echo "[ALREADY RUNNING]"
+    fi
+  fi
+fi
 
-[ -f ~/.nquakesv/qwfwd ] && {
+if [ -f ~/.nquakesv/qwfwd ]; then
   qwfwdport=$(cat ~/.nquakesv/qwfwd)
   count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
-  [ ${count} -eq 0 ] && {
+  if [ ${count} -eq 0 ]; then
     generate_qwfwd_config ${qwfwdport} ${installdir}/qwfwd/qwfwd_template.cfg ${installdir}/qwfwd/qwfwd.cfg
     generate_qwfwd_script
-  }
-  [ -z "${GENERATE_ONLY}" ] && {
+  fi
+  if [ -z "${GENERATE_ONLY}" ]; then
     printf "* Starting qwfwd (port ${qwfwdport})..."
-    [ ${count} -eq 0 ] && {
+    if [ ${count} -eq 0 ]; then
       $(cat ~/.nquakesv/install_dir)/run/qwfwd.sh > /dev/null &
       echo "[OK]"
-    } || echo "[ALREADY RUNNING]"
-  }
-}
+    else
+      echo "[ALREADY RUNNING]"
+    fi
+  fi
+fi
