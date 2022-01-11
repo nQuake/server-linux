@@ -114,13 +114,11 @@ num=0
 for f in ~/.nquakesv/ports/*; do
   num=$((${num}+1))
   port=$(basename ${f})
-  count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
-  if [ ${count} -eq 0 ]; then
-    generate_port_config ${port} ${num} ${installdir}/ktx/port_${port}.cfg
-    generate_port_script ${port} ${num} ${installdir}/run/port_${port}.sh
-  fi
+  generate_port_config ${port} ${num} ${installdir}/ktx/port_${port}.cfg
+  generate_port_script ${port} ${num} ${installdir}/run/port_${port}.sh
   if [ -z "${GENERATE_ONLY}" ]; then
     printf "* Starting mvdsv #${num} (port ${port})..."
+    count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
     if [ ${count} -eq 0 ]; then
       ${installdir}/run/port_${port}.sh > /dev/null &
       echo "[OK]"
@@ -132,13 +130,11 @@ done
 
 if [ -f ~/.nquakesv/qtv ]; then
   qtvport=$(cat ~/.nquakesv/qtv)
-  count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
-  if [ ${count} -eq 0 ]; then
-    generate_qtv_config ${qtvport} ${installdir}/qtv/qtv_template.cfg ${installdir}/qtv/qtv.cfg
-    generate_qtv_script
-  fi
+  generate_qtv_config ${qtvport} ${installdir}/qtv/qtv_template.cfg ${installdir}/qtv/qtv.cfg
+  generate_qtv_script
   if [ -z "${GENERATE_ONLY}" ]; then
     printf "* Starting qtv (port ${qtvport})..."
+    count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
     if [ ${count} -eq 0 ]; then
       $(cat ~/.nquakesv/install_dir)/run/qtv.sh > /dev/null &
       echo "[OK]"
@@ -150,13 +146,11 @@ fi
 
 if [ -f ~/.nquakesv/qwfwd ]; then
   qwfwdport=$(cat ~/.nquakesv/qwfwd)
-  count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
-  if [ ${count} -eq 0 ]; then
-    generate_qwfwd_config ${qwfwdport} ${installdir}/qwfwd/qwfwd_template.cfg ${installdir}/qwfwd/qwfwd.cfg
-    generate_qwfwd_script
-  fi
+  generate_qwfwd_config ${qwfwdport} ${installdir}/qwfwd/qwfwd_template.cfg ${installdir}/qwfwd/qwfwd.cfg
+  generate_qwfwd_script
   if [ -z "${GENERATE_ONLY}" ]; then
     printf "* Starting qwfwd (port ${qwfwdport})..."
+    count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
     if [ ${count} -eq 0 ]; then
       $(cat ~/.nquakesv/install_dir)/run/qwfwd.sh > /dev/null &
       echo "[OK]"
