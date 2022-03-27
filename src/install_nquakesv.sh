@@ -346,7 +346,7 @@ nqwget -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/ma
   grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl
   nqnecho "Enter mirror number [random]: "
   read mirror
-  mirror=$(grep "^${mirror}=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
+  mirror=$(grep "^${mirror}=\(http\|https\|ftp\)://[^ ]*$" nquake.ini | cut -d "=" -f2)
   nqecho
 }
 [ -z "${mirror}" ] && {
@@ -354,7 +354,7 @@ nqwget -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/ma
   range=$(expr $(grep "[0-9]\{1,2\}=\".*" nquake.ini | wc -l) + 1)
   while [ -z "${mirror}" ]; do
     number=$((((RANDOM<<15)|RANDOM) % $range + 1))
-    mirror=$(grep "^${number}=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
+    mirror=$(grep "^${number}=\(http\|https\|ftp\)://[^ ]*$" nquake.ini | cut -d "=" -f2)
     mirrorname=$(grep "^${number}=\".*" nquake.ini | cut -d "\"" -f2)
   done
   nqecho "${mirrorname}"
