@@ -43,7 +43,7 @@ if [ "$1" == "--random-mirror" ] || [ "$2" == "--random-mirror" ] || [ "$3" == "
 else
         read -p "Enter mirror number [random]: " mirror
 fi
-mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
+mirror=$(grep "^$mirror=\(http\|https\|ftp\)://[^ ]*$" nquake.ini | cut -d "=" -f2)
 if [ "$mirror" = "" ]
 then
         echo;echo -n "* Using mirror: "
@@ -52,7 +52,7 @@ then
         do
                 number=$RANDOM
                 let "number %= $RANGE"
-                mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
+                mirror=$(grep "^$number=\(http\|https\|ftp\)://[^ ]*$" nquake.ini | cut -d "=" -f2)
                 mirrorname=$(grep "^$number=\".*" nquake.ini | cut -d "\"" -f2)
         done
         echo "$mirrorname"
