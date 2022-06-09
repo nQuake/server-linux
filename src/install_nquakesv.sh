@@ -8,7 +8,7 @@ show_help() {
 cat << EOF
 usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
                            [-q|--quiet] [-qq|--extra-quiet]
-                           [-h|--hostname=<hostname>]
+                           [-o|--hostname=<hostname>]
                            [-p|--number-of-ports=<count>] [-t|--qtv] [-f|--qwfwd]
                            [-l|--listen-address=<address>]
                            [-a|--admin=<name>] [-e|--admin-email=<email>]
