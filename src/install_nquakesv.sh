@@ -228,7 +228,7 @@ nqiecho
   read hostdns
 
   # Ports
-  printf "How many ports of KTX do you wish to run (max 10)? [${defaultports}]: "
+  printf "How many ports of KTX do you wish to run (max 64)? [${defaultports}]: "
   read ports
 
   # Rcon
@@ -304,7 +304,7 @@ nqecho "========================================="
 }
 
 # Adjust invalid ports
-[ "${ports}" -gt 10 ] && ports=10
+[ "${ports}" -gt 64 ] && ports=64
 [ "${ports}" -lt 1 ] && ports=1
 
 nqecho "Installation proceeding..."
