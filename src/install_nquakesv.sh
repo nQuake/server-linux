@@ -6,7 +6,7 @@ cat << EOF
 usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
                            [-q|--quiet] [-qq|--extra-quiet]
                            [-o|--hostname=<hostname>]
-                           [-p|--number-of-ports=<count>] [-t|--qtv] [-f|--qwfwd]
+                           [-p|--number-of-ports=<count>] [-nt|--no-qtv] [-nf|--no-qwfwd]
                            [-l|--listen-address=<address>]
                            [-a|--admin=<name>] [-e|--admin-email=<email>]
                            [-r|--rcon-password=<password>] [-y|--qtv-password=<password>]
@@ -21,8 +21,10 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
     -qq, --extra-quiet      do not output errors during setup.
     -o, --hostname          hostname of the server.
     -p, --number-of-ports   number of ports to run.
-    -t, --qtv               install qtv.
-    -f, --qwfwd             install qwfwd proxy.
+    -t, --qtv               install qtv (default, kept for backwards compatibility).
+    -f, --qwfwd             install qwfwd proxy (default, kept for backwards compatibility).
+    -nt, --no-qtv           do not install qtv.
+    -nf, --no-qwfwd         do not install qwfwd proxy.
     -l, --listen-address    fully qualified domain name (fqdn) or IP address.
     -a, --admin             administrator name.
     -e, --admin-email       administrator e-mail.
@@ -89,6 +91,14 @@ for i in "$@"; do
       nqinstallqwfwd="y"
       shift
       ;;
+    -nt|--no-qtv)
+      nqinstallqtv="n"
+      shift
+      ;;
+    -nf|--no-qwfwd)
+      nqinstallqwfwd="n"
+      shift
+      ;;
     -l=*|--listen-address=*)
       nqaddr="${i#*=}"
       shift
@@ -133,8 +143,8 @@ done
 defaultdir=${nqinstalldir:-\~/nquakesv}
 defaulthostname=${nqhostname:-"KTX Allround"}
 defaultports=${nqnumports:-4}
-defaultqtv=${nqinstallqtv:-n}
-defaultqwfwd=${nqinstallqwfwd:-n}
+defaultqtv=${nqinstallqtv:-y}
+defaultqwfwd=${nqinstallqwfwd:-y}
 defaultadmin=${nqadmin:-${USER}}
 defaultemail=${nqemail:-${defaultadmin}@example.com}
 defaultrcon=${nqrcon:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12;echo)}
@@ -226,7 +236,7 @@ nqiecho
   read rcon
 
   # QTV
-  printf "Do you wish to run a qtv proxy? (y/n) [${defaultqtv}]: "
+  printf "Do you wish to run a qtv? (y/n) [${defaultqtv}]: "
   read qtv
   [ "${qtv}" = "y" ] && {
     printf "What should the qtv admin password be? [${defaultqtvpass}]: "
