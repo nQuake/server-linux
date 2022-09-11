@@ -1,7 +1,4 @@
 #!/bin/sh
-# nQuakesv Installer Script v1.8 (for Linux)
-# by Empezar & dimman
-nqversion="1.8"
 
 # Usage info
 show_help() {
@@ -195,8 +192,8 @@ which wget >/dev/null || error "The package 'wget' is not installed. Please inst
 which screen >/dev/null || error "The package 'screen' is not installed. Please install it and run the nQuakesv installation again.";
 
 nqecho
-nqecho "Welcome to the nQuakesv v${nqversion} installation"
-nqecho "========================================="
+nqecho "Welcome to the nQuakesv installation"
+nqecho "===================================="
 nqiecho
 nqiecho "Press ENTER to use [default] option."
 nqiecho
