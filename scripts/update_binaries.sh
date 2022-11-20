@@ -31,7 +31,7 @@ binary=`uname -m`
 # Download nquake.ini
 mkdir tmp
 cd tmp
-wget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
+wget --progress=dot:giga --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
 if [ -s "nquake.ini" ]
 then
         echo foo >> /dev/null
@@ -69,9 +69,9 @@ echo
 echo "=== Downloading ==="
 if [ "$binary" == "x86_64" ]
 then
-        wget --inet4-only -O sv-bin-x64.zip $mirror/sv-bin-x64.zip
+        wget --progress=dot:giga --inet4-only -O sv-bin-x64.zip $mirror/sv-bin-x64.zip
 else
-        wget --inet4-only -O sv-bin-x86.zip $mirror/sv-bin-x86.zip
+        wget --progress=dot:giga --inet4-only -O sv-bin-x86.zip $mirror/sv-bin-x86.zip
 fi
 
 # Terminate installation if not all packages were downloaded

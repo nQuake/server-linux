@@ -24,7 +24,7 @@ echo
 # Download nquake.ini
 mkdir tmp
 cd tmp
-wget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
+wget --progress=dot:giga --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
 if [ -s "nquake.ini" ]
 then
         echo foo >> /dev/null
@@ -61,7 +61,7 @@ echo
 
 # Download maps
 echo "=== Downloading ==="
-wget --inet4-only -O sv-configs.zip $mirror/sv-configs.zip
+wget --progress=dot:giga --inet4-only -O sv-configs.zip $mirror/sv-configs.zip
 
 # Terminate installation if not all packages were downloaded
 if [ -s "sv-configs.zip" ]

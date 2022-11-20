@@ -182,9 +182,9 @@ nqiecho() {
 
 nqwget() {
   [ -n "${quiet}" ] && {
-    wget -q $* >/dev/null 2>&1
+    wget -q --progress=dot:giga $* >/dev/null 2>&1
   } || {
-    wget $*
+    wget --progress=dot:giga $*
   }
 }
 
