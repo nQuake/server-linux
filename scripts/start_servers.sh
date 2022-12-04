@@ -103,7 +103,7 @@ generate_port_script() {
   outputfile=$3
 
   ( [ ! -f ${outputfile} ] || [ ! -z ${REGENERATE} ] ) && {
-    echo "cd \$(cat ~/.nquakesv/install_dir)/ && screen -dmS qw_$port ./mvdsv -port ${port} -game ktx +exec port_${port}.cfg" > ${outputfile}
+    echo "cd \$(cat ~/.nquakesv/install_dir)/ && screen -dmS qw_$port ./mvdsv -mem 64 -port ${port} -game ktx +exec port_${port}.cfg" > ${outputfile}
     chmod +x ${outputfile}
   }
 }
