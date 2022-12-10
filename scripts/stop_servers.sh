@@ -6,10 +6,10 @@ fi
 
 for f in ~/.nquakesv/ports/*; do
   port=$(basename ${f})
-  count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
+  count=$(ps ax | grep -v grep | grep "mvdsv.*-port ${port}" | wc -l)
   printf "* Stopping mvdsv (port ${port})..."
   if [ ${count} -gt 0 ]; then
-    pid=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | grep "SCREEN" | awk '{print $1}')
+    pid=$(ps ax | grep -v grep | grep "mvdsv.*-port ${port}" | grep "SCREEN" | awk '{print $1}')
     kill -9 ${pid} >/dev/null
     echo "[OK]"
   else
