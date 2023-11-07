@@ -24,7 +24,7 @@ echo
 # Download nquake.ini
 mkdir -p tmp
 cd tmp
-wget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
+wget --progress=dot:giga --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
 if [ -s "nquake.ini" ]
 then
         echo foo >> /dev/null
@@ -61,12 +61,12 @@ echo
 
 # Download maps
 echo "=== Downloading ==="
-wget --inet4-only -O sv-maps.zip $mirror/sv-maps.zip
+wget --progress=dot:giga --inet4-only -O sv-maps.zip $mirror/sv-maps.zip
 if [ -s "sv-maps.zip" ]
 then
         if [ "$(du sv-maps.zip | cut -f1)" \> "0" ]
         then
-                wget --inet4-only -O sv-maps-gpl.zip $mirror/sv-maps-gpl.zip
+                wget --progress=dot:giga --inet4-only -O sv-maps-gpl.zip $mirror/sv-maps-gpl.zip
         fi
 fi
 
@@ -96,7 +96,7 @@ echo -n "* Extracting GPL maps..."
 unzip -qqo sv-maps-gpl.zip 2> /dev/null;echo "done"
 
 echo -n "* Downloading core maps..."
-wget -P qw/maps -r --no-parent -N -nd -A "*.bsp" -A "*.ent" https://maps.quakeworld.nu/core/
+wget --progress=dot:giga -P qw/maps -r --no-parent -N -nd -A "*.bsp" -A "*.ent" https://maps.quakeworld.nu/core/
 
 echo -n "* Setting permissions..."
 chmod 644 qw/maps/* 2> /dev/null
