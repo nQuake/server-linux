@@ -501,7 +501,7 @@ nqecho "done"
 
 nqecho
 nqecho "Installation complete. Please read the README in ${directory}."
-nqecho "Please make sure to accept UDP ports 28501-$((28500+${ports})) (mvdsv), UDP port 30000 (qwfwd) and TCP port 28000 (qtv)."
+nqecho "Please make sure to accept UDP ports 28501-$((28500+${ports})) (mvdsv), UDP port 30000 (qwfwd) and TCP/UDP port 28000 (qtv/hub)."
 nqecho
 
 exit 0
