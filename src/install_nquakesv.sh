@@ -430,7 +430,7 @@ nqnecho "* Removing distribution files..."
 # Convert DOS files to UNIX
 nqnecho "* Converting DOS files to UNIX..."
 for file in $(find ${directory} -iname "*.cfg" -or -iname "*.txt" -or -iname "*.sh" -or -iname "README"); do
-  [ -f "${file}" ] && sed -i 's/^M$//' ${file}
+  [ -f "${file}" ] && sed -i 's/\r$//' ${file}
 done
 nqecho "done"
 
