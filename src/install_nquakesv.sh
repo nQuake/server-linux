@@ -413,6 +413,7 @@ nqnecho "* Extracting nQuakesv maps..."
 nqnecho "* Downloading shell scripts..."
 (githubdl ${directory}/start_servers.sh scripts/start_servers.sh && \
 githubdl ${directory}/stop_servers.sh scripts/stop_servers.sh && \
+githubdl ${directory}/update.sh scripts/update.sh && \
 githubdl ${directory}/update_binaries.sh scripts/update_binaries.sh && \
 githubdl ${directory}/update_configs.sh scripts/update_configs.sh && \
 githubdl ${directory}/update_maps.sh scripts/update_maps.sh && echo done) || nqecho fail
