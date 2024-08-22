@@ -12,6 +12,7 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
                            [-r|--rcon-password=<password>] [-y|--qtv-password=<password>]
                            [-s[=<path>]|--search-pak[=<path>]]
                            [-c|--no-cron] [TARGETDIR]
+                           [-u|--no-update-config]
 
     -h, --help              display this help and exit.
     -n, --non-interactive   non-interactive mode (use defaults or command line
@@ -33,6 +34,7 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
     -s, --search-pak        search for pak1.pak during setup, specify a directory
                             to start searching there instead of in home folder.
     -c, --no-cron           don't add cron job.
+    -u, --no-update-config  don't update configuration files in ~/.nquakesv (if installing again for testing/comparing and don't want to break initial install).
 EOF
 }
 
@@ -55,6 +57,7 @@ nqqtvpassword=""
 nqsearchpak=""
 searchdir=""
 nqaddcron=""
+nqupdateconfig=""
 nqinstalldir=""
 
 for i in "$@"; do
@@ -133,6 +136,10 @@ for i in "$@"; do
       nqaddcron="n"
       shift
       ;;
+    -u|--no-update-config)
+      nqupdateconfig="n"
+      shift
+      ;;
     *)
       nqinstalldir="${i#*=}"
       ;;
@@ -152,6 +159,7 @@ defaultqtvpass=${nqqtvpassword:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c12
 defaultsearchoption=${nqsearchpak:-n}
 defaultsearchdir=${searchdir:-\~/}
 defaultaddcron=${nqaddcron:-y}
+defaultupdateconfig=${nqupdateconfig:-y}
 
 error() {
   printf "ERROR: %s\n" "$*"
@@ -449,38 +457,54 @@ chmod -f +x ${directory}/addons/*.sh 2>/dev/null
 nqecho "done"
 
 # Update configuration files
-nqnecho "* Updating configuration files..."
-mkdir -p ~/.nquakesv
-echo ${directory} > ~/.nquakesv/install_dir
-echo ${hostdns} > ~/.nquakesv/ip
-echo "${admin} <${email}>" > ~/.nquakesv/admin
-# Generate config file
-echo "SV_HOSTNAME=\"${hostname}\"" > ~/.nquakesv/config
-echo "SV_ADMININFO=\"${admin} <${email}>\"" >> ~/.nquakesv/config
-echo "SV_RCON=\"${rcon}\"" >> ~/.nquakesv/config
-echo "SV_QTVPASS=\"${qtvpass}\"" >> ~/.nquakesv/config
-# qtv
-[ "${qtv}" = "y" ] && {
-  echo 28000 > ~/.nquakesv/qtv
-  ln -s ${directory}/ktx/demos ${directory}/qtv/demos
-  ln -s ${directory}/qw/maps ${directory}/qtv/maps
-}
-# qwfwd
-[ "${qwfwd}" = "y" ] && {
-  echo 30000 > ~/.nquakesv/qwfwd
-}
-nqecho "done"
+[ -d "~/.nquakesv" ] && {
+  [ -z "${noninteractive}" ] && {
+    nqecho
+    nqnecho "Update configuration files (overwrites install_dir of previous installation) (y/n) [${defaultupdateconfig}]: "
+    read updateconfig
+  }
 
-# Create port files
-nqnecho "* Adjusting amount of ports..."
-mkdir -p ~/.nquakesv/ports
-i=1
-while [ ${i} -le ${ports} ]; do
-  [ ${i} -gt 9 ] && port=285${i} || port=2850${i}
-  touch ~/.nquakesv/ports/${port}
-  i=$((i+1))
-done
-nqecho "done"
+  # Set default if nothing was entered
+  [ -z "${updateconfig}" ] && updateconfig=${defaultupdateconfig}
+}
+
+[ "${updateconfig}" = "y" ] && {
+  nqnecho "* Updating configuration files..."
+  mkdir -p ~/.nquakesv
+  echo ${directory} > ~/.nquakesv/install_dir
+  echo ${hostdns} > ~/.nquakesv/ip
+  echo "${admin} <${email}>" > ~/.nquakesv/admin
+  # Generate config file
+  echo "SV_HOSTNAME=\"${hostname}\"" > ~/.nquakesv/config
+  echo "SV_ADMININFO=\"${admin} <${email}>\"" >> ~/.nquakesv/config
+  echo "SV_RCON=\"${rcon}\"" >> ~/.nquakesv/config
+  echo "SV_QTVPASS=\"${qtvpass}\"" >> ~/.nquakesv/config
+  # qtv
+  [ "${qtv}" = "y" ] && {
+    echo 28000 > ~/.nquakesv/qtv
+    ln -s ${directory}/ktx/demos ${directory}/qtv/demos
+    ln -s ${directory}/qw/maps ${directory}/qtv/maps
+  }
+  # qwfwd
+  [ "${qwfwd}" = "y" ] && {
+    echo 30000 > ~/.nquakesv/qwfwd
+  }
+  nqecho "done"
+
+  # Create port files
+  nqnecho "* Adjusting amount of ports..."
+  mkdir -p ~/.nquakesv/ports
+  i=1
+  while [ ${i} -le ${ports} ]; do
+    [ ${i} -gt 9 ] && port=285${i} || port=2850${i}
+    touch ~/.nquakesv/ports/${port}
+    i=$((i+1))
+  done
+  nqecho "done"
+}
+[ "${updateconfig}" = "y" ] || {
+  nqnecho "* Skipping update of configuration files..."
+}
 
 [ -d "/etc/cron.d" ] && {
   [ -z "${noninteractive}" ] && {
