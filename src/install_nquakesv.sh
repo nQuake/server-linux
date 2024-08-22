@@ -34,7 +34,7 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
     -s, --search-pak        search for pak1.pak during setup, specify a directory
                             to start searching there instead of in home folder.
     -c, --no-cron           don't add cron job.
-    -u, --no-update-config  don't update configuration files in ~/.nquakesv (if installing again for testing/comparing and don't want to break initial install).
+    -u, --no-update-config  don't update configuration files in ~/.nquakesv.
 EOF
 }
 
@@ -458,16 +458,16 @@ chmod -f +x ${directory}/addons/*.sh 2>/dev/null
 nqecho "done"
 
 # Update configuration files
-[ -d "~/.nquakesv" ] && {
+[ -d "$HOME/.nquakesv" ] && {
   [ -z "${noninteractive}" ] && {
     nqecho
-    nqnecho "Update configuration files (overwrites install_dir of previous installation) (y/n) [${defaultupdateconfig}]: "
+    nqnecho "Update configuration files (overwrites ~/.nquakesv/* of previous installation) (y/n) [${defaultupdateconfig}]: "
     read updateconfig
   }
-
-  # Set default if nothing was entered
-  [ -z "${updateconfig}" ] && updateconfig=${defaultupdateconfig}
 }
+
+# Set default if nothing was entered
+[ -z "${updateconfig}" ] && updateconfig=${defaultupdateconfig}
 
 [ "${updateconfig}" = "y" ] && {
   nqnecho "* Updating configuration files..."
