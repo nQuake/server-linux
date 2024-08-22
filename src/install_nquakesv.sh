@@ -375,6 +375,7 @@ nqwget -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/ma
   nqecho "${mirrorname}"
 }
 mkdir -p id1
+mkdir -p demos_archive
 nqecho
 
 # Download all the packages
@@ -519,7 +520,7 @@ nqecho "done"
   [ "${addcron}" = "y" ] && {
     echo "*/10 * * * * $USER cd \$(cat ~/.nquakesv/install_dir) && ./start_servers.sh >/dev/null 2>&1" | sudo tee /etc/cron.d/nquakesv >/dev/null
     echo "@reboot $USER cd \$(cat ~/.nquakesv/install_dir) && ./start_servers.sh >/dev/null 2>&1" | sudo tee -a /etc/cron.d/nquakesv > /dev/null
-    echo "# Uncomment the following line and create a demos_archive folder if you would like to back up demos older than 90 days (more than 4096 demos causes issues)" | sudo tee -a /etc/cron.d/nquakesv > /dev/null
+    echo "# Uncomment the following line if you would like to move demos older than 90 days to the demos_archive folder (more than 4096 demos in mvdsv causes issues)" | sudo tee -a /etc/cron.d/nquakesv > /dev/null
     echo "#0 13 * * 1 $USER rsync -a \$(cat ~/.nquakesv/install_dir)/ktx/demos/*.mvd \$(cat ~/.nquakesv/install_dir)/demos_archive/. >/dev/null && find \$(cat ~/.nquakesv/install_dir)/ktx/demos -mtime +90 -print0|xargs -r -0 rm -f >/dev/null" | sudo tee -a /etc/cron.d/nquakesv > /dev/null
   }
 }
