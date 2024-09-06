@@ -2,7 +2,7 @@
 
 # Obsolete file, replaced by update_scripts.sh - Only here for backwards compatibility
 
-installdir=$(cat ~/.nquakesv/install_dir)
+directory=$(cat ~/.nquakesv/install_dir)
 
 nqecho() {
   nqnecho "$* \n"
@@ -45,13 +45,20 @@ githubd2() {
 nqnecho "* Downloading shell scripts..."
 (githubdl ${directory}/start_servers.sh scripts/start_servers.sh && \
 githubdl ${directory}/stop_servers.sh scripts/stop_servers.sh && \
-githubdl ${directory}/update_scripts.sh scripts/update.sh && \
+githubdl ${directory}/update_scripts.sh scripts/update_scripts.sh && \
 githubdl ${directory}/update_binaries.sh scripts/update_binaries.sh && \
 githubdl ${directory}/update_configs.sh scripts/update_configs.sh && \
 githubdl ${directory}/update_maps.sh scripts/update_maps.sh && \
 githubd2 ${directory}/nquakesv-build-mvdsv.sh quake-scripts/build/nquakesv-build-mvdsv.sh && \
 githubd2 ${directory}/nquakesv-build-ktx.sh quake-scripts/build/nquakesv-build-ktx.sh && echo done) || nqecho fail
 nqecho
+
+# Convert DOS files to UNIX
+nqnecho "* Converting DOS files to UNIX..."
+for file in $(find ${directory} -iname "*.sh"); do
+  [ -f "${file}" ] && sed -i 's/\r$//' ${file}
+done
+nqecho "done"
 
 nqecho "IMPORTANT: update.sh has been replaced by update_scripts.sh"
 nqecho "You can delete update.sh"
