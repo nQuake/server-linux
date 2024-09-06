@@ -565,8 +565,8 @@ nqecho
 
 # Check if 'git procps qstat make gcc pkg-config cmake' are installed
 which git >/dev/null || nqecho "The package 'git' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
-which procps >/dev/null || nqecho "The package 'procps' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
-which qstat >/dev/null || nqecho "The package 'qstat' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
+which pkill >/dev/null || nqecho "The package 'procps' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
+which quakestat >/dev/null || nqecho "The package 'qstat' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
 which make >/dev/null || nqecho "The package 'make' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
 which gcc >/dev/null || nqecho "The package 'gcc' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
 which pkg-config >/dev/null || nqecho "The package 'pkg-config' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
@@ -584,7 +584,8 @@ nqecho
 nqecho "Installation complete. Please read the README in ${directory}."
 nqecho
 nqecho "Please make sure to accept UDP ports 28501-$((28500+${ports})) (mvdsv), UDP port 30000 (qwfwd) and TCP/UDP port 28000 (qtv/hub)."
-nqecho "For example on debian, 'sudo apt install ufw && sudo ufw allow ssh && sudo ufw allow 28000/tcp && sudo ufw allow 28000/udp && sudo ufw allow 28501:28505/udp && sudo ufw allow 30000/udp && sudo ufw enable'"
+nqecho "For example on debian:"
+nqecho "sudo apt install ufw && sudo ufw allow ssh && sudo ufw allow 28000/tcp && sudo ufw allow 28000/udp && sudo ufw allow 28501:28505/udp && sudo ufw allow 30000/udp && sudo ufw enable"
 nqecho
 nqecho "Optionally, edit ktx/configs/usermodes/default.cfg and change 'set k_teamoverlay' to 1."
 nqecho "Optionally, edit ktx/ktx.cfg and uncomment the k_admincode line and set your own admincode."
