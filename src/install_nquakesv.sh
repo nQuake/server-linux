@@ -554,6 +554,7 @@ nqecho "done"
 [ -z "${build}" ] && build=${defaultbuild}
 
 [ "${build}" = "y" ] && {
+nqecho
 nqecho "Running ./nquakesv-build-mvdsv.sh ..."
 nqecho
 ./nquakesv-build-mvdsv.sh
@@ -570,15 +571,18 @@ which make >/dev/null || nqecho "The package 'make' is not installed. Please ins
 which gcc >/dev/null || nqecho "The package 'gcc' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
 which pkg-config >/dev/null || nqecho "The package 'pkg-config' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
 which cmake >/dev/null || nqecho "The package 'cmake' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again.";
-
+nqecho
 nqecho "Optionally, edit the top of nquakesv-build-mvdsv.sh and nquakesv-build-ktx.sh as needed to change repo/branch from which to build, and run them again"
 }
 
 # Start servers
+nqecho
+nqecho STARTING SERVER
 ./start_servers.sh
 
 nqecho
 nqecho "Installation complete. Please read the README in ${directory}."
+nqecho
 nqecho "Please make sure to accept UDP ports 28501-$((28500+${ports})) (mvdsv), UDP port 30000 (qwfwd) and TCP/UDP port 28000 (qtv/hub)."
 nqecho "For example on debian, 'sudo apt install ufw && sudo ufw allow ssh && sudo ufw allow 28000/tcp && sudo ufw allow 28000/udp && sudo ufw allow 28501:28505/udp && sudo ufw allow 30000/udp && sudo ufw enable'"
 nqecho
