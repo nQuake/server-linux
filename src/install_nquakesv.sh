@@ -562,7 +562,7 @@ nqecho
 ./nquakesv-build-ktx.sh
 nqecho
 
-# Check if `git procps qstat make gcc pkg-config cmake` are installed
+# Check if 'git procps qstat make gcc pkg-config cmake' are installed
 which git >/dev/null || nqecho "The package 'git' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
 which procps >/dev/null || nqecho "The package 'procps' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
 which qstat >/dev/null || nqecho "The package 'qstat' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
@@ -580,13 +580,13 @@ nqecho "Optionally, edit the top of nquakesv-build-mvdsv.sh and nquakesv-build-k
 nqecho
 nqecho "Installation complete. Please read the README in ${directory}."
 nqecho "Please make sure to accept UDP ports 28501-$((28500+${ports})) (mvdsv), UDP port 30000 (qwfwd) and TCP/UDP port 28000 (qtv/hub)."
-nqecho "For example on debian, `sudo apt install ufw && sudo ufw allow ssh && sudo ufw allow 28000/tcp && sudo ufw allow 28000/udp && sudo ufw allow 28501:28505/udp && sudo ufw allow 30000/udp && sudo ufw enable`"
+nqecho "For example on debian, 'sudo apt install ufw && sudo ufw allow ssh && sudo ufw allow 28000/tcp && sudo ufw allow 28000/udp && sudo ufw allow 28501:28505/udp && sudo ufw allow 30000/udp && sudo ufw enable'"
 nqecho
-nqecho "Optionally, edit ktx/configs/usermodes/default.cfg and change `set k_teamoverlay` to 1."
+nqecho "Optionally, edit ktx/configs/usermodes/default.cfg and change 'set k_teamoverlay' to 1."
 nqecho "Optionally, edit ktx/ktx.cfg and uncomment the k_admincode line and set your own admincode."
 nqecho
-nqecho "Run `./stop_servers.sh && ./start_servers.sh` after any configuration changes or new builds."
-nqecho "Run `./update_scripts.sh or ./update_maps.sh occasionally to update scripts/maps"
+nqecho "Run './stop_servers.sh && ./start_servers.sh' after any configuration changes or new builds."
+nqecho "Run './update_scripts.sh' or './update_maps.sh' occasionally to update scripts/maps."
 nqecho
 
 exit 0
