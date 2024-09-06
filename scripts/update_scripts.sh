@@ -36,7 +36,7 @@ githubdl() {
 githubd2() {
   localpath=$1
   remotepath=$2
-  nqwget -q -O ${localpath} https://raw.githubusercontent.com/ciscon/random/blob/master/${remotepath}
+  nqwget -q -O ${localpath} https://raw.githubusercontent.com/ciscon/random/master/${remotepath}
   chmod +x ${localpath}
 }
 
