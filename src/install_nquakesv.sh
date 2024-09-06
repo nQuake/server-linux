@@ -437,7 +437,7 @@ nqnecho "* Extracting nQuakesv maps..."
 nqnecho "* Downloading shell scripts..."
 (githubdl ${directory}/start_servers.sh scripts/start_servers.sh && \
 githubdl ${directory}/stop_servers.sh scripts/stop_servers.sh && \
-githubdl ${directory}/update.sh scripts/update.sh && \
+githubdl ${directory}/update_scripts.sh scripts/update_scripts.sh && \
 githubdl ${directory}/update_binaries.sh scripts/update_binaries.sh && \
 githubdl ${directory}/update_configs.sh scripts/update_configs.sh && \
 githubdl ${directory}/update_maps.sh scripts/update_maps.sh && \
@@ -586,7 +586,7 @@ nqecho "Optionally, edit ktx/configs/usermodes/default.cfg and change `set k_tea
 nqecho "Optionally, edit ktx/ktx.cfg and uncomment the k_admincode line and set your own admincode."
 nqecho
 nqecho "Run `./stop_servers.sh && ./start_servers.sh` after any configuration changes or new builds."
-nqecho "Run `./update.sh or ./update_maps.sh occasionally to update scripts/maps"
+nqecho "Run `./update_scripts.sh or ./update_maps.sh occasionally to update scripts/maps"
 nqecho
 
 exit 0
