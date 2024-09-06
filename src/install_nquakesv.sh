@@ -13,6 +13,7 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
                            [-s[=<path>]|--search-pak[=<path>]]
                            [-c|--no-cron] [TARGETDIR]
                            [-u|--no-update-config]
+                           [-b|--no-build]
 
     -h, --help              display this help and exit.
     -n, --non-interactive   non-interactive mode (use defaults or command line
@@ -35,6 +36,7 @@ usage: install_nquakesv.sh [-h|--help] [-n|--non-interactive]
                             to start searching there instead of in home folder.
     -c, --no-cron           don't add cron job.
     -u, --no-update-config  don't update configuration files in ~/.nquakesv.
+    -b, --no-build          don't run nquakesv-build-mvdsv.sh and nquakesv-build-ktx.sh scripts to build mvdsv and ktx.
 EOF
 }
 
@@ -58,6 +60,7 @@ nqsearchpak=""
 searchdir=""
 nqaddcron=""
 nqupdateconfig=""
+nqbuild=""
 nqinstalldir=""
 
 for i in "$@"; do
@@ -140,6 +143,10 @@ for i in "$@"; do
       nqupdateconfig="n"
       shift
       ;;
+    -b|--no-build)
+      nqbuild="n"
+      shift
+      ;;
     *)
       nqinstalldir="${i#*=}"
       ;;
@@ -160,6 +167,7 @@ defaultsearchoption=${nqsearchpak:-n}
 defaultsearchdir=${searchdir:-\~/}
 defaultaddcron=${nqaddcron:-y}
 defaultupdateconfig=${nqupdateconfig:-y}
+defaultbuild=${nqbuild:-y}
 
 error() {
   printf "ERROR: %s\n" "$*"
@@ -200,6 +208,13 @@ githubdl() {
   localpath=$1
   remotepath=$2
   nqwget -q -O ${localpath} https://raw.githubusercontent.com/nQuake/server-linux/master/${remotepath}
+  chmod +x ${localpath}
+}
+
+githubd2() {
+  localpath=$1
+  remotepath=$2
+  nqwget -q -O ${localpath} https://raw.githubusercontent.com/ciscon/random/blob/master/${remotepath}
   chmod +x ${localpath}
 }
 
@@ -425,7 +440,9 @@ githubdl ${directory}/stop_servers.sh scripts/stop_servers.sh && \
 githubdl ${directory}/update.sh scripts/update.sh && \
 githubdl ${directory}/update_binaries.sh scripts/update_binaries.sh && \
 githubdl ${directory}/update_configs.sh scripts/update_configs.sh && \
-githubdl ${directory}/update_maps.sh scripts/update_maps.sh && echo done) || nqecho fail
+githubdl ${directory}/update_maps.sh scripts/update_maps.sh && \
+githubd2 ${directory}/nquakesv-build-mvdsv.sh quake-scripts/build/nquakesv-build-mvdsv.sh && \
+githubd2 ${directory}/nquakesv-build-ktx.sh quake-scripts/build/nquakesv-build-ktx.sh && echo done) || nqecho fail
 nqecho
 
 # Rename files
@@ -507,6 +524,7 @@ nqecho "done"
   nqnecho "* Skipping update of configuration files..."
 }
 
+# Create cron entries
 [ -d "/etc/cron.d" ] && {
   [ -z "${noninteractive}" ] && {
     nqecho
@@ -525,9 +543,50 @@ nqecho "done"
   }
 }
 
+# Build mvdsv and ktx
+[ -z "${noninteractive}" ] && {
+  nqecho
+  nqnecho "Build mvdsv and ktx (ensures server is updated) (y/n) [${defaultbuild}]: "
+  read build
+}
+
+# Set default if nothing was entered
+[ -z "${build}" ] && build=${defaultbuild}
+
+[ "${build}" = "y" ] && {
+nqecho "Running ./nquakesv-build-mvdsv.sh ..."
+nqecho
+./nquakesv-build-mvdsv.sh
+nqecho "Running ./nquakesv-build-ktx.sh ..."
+nqecho
+./nquakesv-build-ktx.sh
+nqecho
+
+# Check if `git procps qstat make gcc pkg-config cmake` are installed
+which git >/dev/null || nqecho "The package 'git' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
+which procps >/dev/null || nqecho "The package 'procps' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
+which qstat >/dev/null || nqecho "The package 'qstat' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
+which make >/dev/null || nqecho "The package 'make' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
+which gcc >/dev/null || nqecho "The package 'gcc' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
+which pkg-config >/dev/null || nqecho "The package 'pkg-config' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again."
+which cmake >/dev/null || nqecho "The package 'cmake' is not installed. Please install it and run ./nquakesv-build-mvdsv.sh and ./nquakesv-build-ktx.sh again.";
+
+nqecho "Optionally, edit the top of nquakesv-build-mvdsv.sh and nquakesv-build-ktx.sh as needed to change repo/branch from which to build, and run them again"
+}
+
+# Start servers
+./start_servers.sh
+
 nqecho
 nqecho "Installation complete. Please read the README in ${directory}."
 nqecho "Please make sure to accept UDP ports 28501-$((28500+${ports})) (mvdsv), UDP port 30000 (qwfwd) and TCP/UDP port 28000 (qtv/hub)."
+nqecho "For example on debian, `sudo apt install ufw && sudo ufw allow ssh && sudo ufw allow 28000/tcp && sudo ufw allow 28000/udp && sudo ufw allow 28501:28505/udp && sudo ufw allow 30000/udp && sudo ufw enable`"
+nqecho
+nqecho "Optionally, edit ktx/configs/usermodes/default.cfg and change `set k_teamoverlay` to 1."
+nqecho "Optionally, edit ktx/ktx.cfg and uncomment the k_admincode line and set your own admincode."
+nqecho
+nqecho "Run `./stop_servers.sh && ./start_servers.sh` after any configuration changes or new builds."
+nqecho "Run `./update.sh or ./update_maps.sh occasionally to update scripts/maps"
 nqecho
 
 exit 0
