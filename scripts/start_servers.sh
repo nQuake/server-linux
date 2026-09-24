@@ -56,7 +56,11 @@ generate_qtv_script() {
   outputfile=${installdir}/run/qtv.sh
 
   ( [ ! -f ${outputfile} ] || [ ! -z ${REGENERATE} ] ) && {
-    echo "cd \$(cat ~/.nquakesv/install_dir)/qtv/ && screen -dmS qtv ./qtv.bin +exec qtv.cfg" > ${outputfile}
+    cat > ${outputfile} <<'EOF'
+F=/tmp/nquakesv-qtv.cmd
+[ -p "$F" ] || { rm -f "$F"; mkfifo -m 600 "$F"; }
+cd $(cat ~/.nquakesv/install_dir)/qtv/ && screen -dmS qtv sh -c './qtv.bin +exec qtv.cfg < /tmp/nquakesv-qtv.cmd > /tmp/nquakesv-qtv.out 2>&1 & exec 3>/tmp/nquakesv-qtv.cmd; wait'
+EOF
     chmod +x ${outputfile}
   }
 }
