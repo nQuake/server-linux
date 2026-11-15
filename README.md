@@ -79,6 +79,34 @@ To disable qtv:
 rm ~/.nquakesv/qtv
 ```
 
+#### QTV behind cloud NAT
+
+If the QTV web page opens but its local game streams fail to connect, check
+whether the VM can reach its own public address. Some cloud networks do not
+route those connections back to the VM.
+
+Use a public DNS name for this VM in `~/.nquakesv/ip` and keep it in the QTV
+configuration. For example, in `qtv/qtv.cfg` under the installation directory:
+
+```text
+address quake.example.net:28000
+qtv quake.example.net:28501
+```
+
+If QTV and the game servers run on the same VM and MVDSV listens on loopback,
+add this entry to that VM's `/etc/hosts`, replacing the example name with
+your public hostname:
+
+```text
+127.0.0.1 quake.example.net
+```
+
+This lets QTV reach the game locally while preserving the public source name
+in the web listing. Public DNS should still point to the VM's public address.
+For an existing install, back up `qtv/qtv.cfg`, update its `address` and local
+`qtv` lines, and restart QTV. From another machine, open
+`http://quake.example.net:28000/nowplaying/` and try opening a stream.
+
 ### QWFWD
 
 To enable qwfwd (port 30000):
